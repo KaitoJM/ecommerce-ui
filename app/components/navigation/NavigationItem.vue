@@ -9,10 +9,10 @@
           : 'opacity-50 hover:opacity-100 rounded-md',
       ]"
     >
-      <UIcon v-if="nav.icon" :name="nav.icon" class="size-4 text-gray-400" />
+      <UIcon v-if="nav.icon" :name="nav.icon" class="size-4 text-primary" />
       {{ nav.title }}
     </NuxtLink>
-    <ul v-if="nav.children?.length" class="pl-2 ml-4 border-l border-gray-200">
+    <ul v-if="nav.children?.length" class="pl-2 ml-4 border-l border-primary">
       <NavigationItem :navigation="nav.children" />
     </ul>
   </li>
