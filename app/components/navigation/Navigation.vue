@@ -1,7 +1,12 @@
 <template>
-  <ul class="px-4">
-    <NavigationItem :navigation="navigation" />
-  </ul>
+  <div>
+    <p class="text-xs uppercase font-semibold px-2 block mb-1 text-gray-400">
+      Main Menu
+    </p>
+    <ul>
+      <NavigationItem :navigation="navigation" />
+    </ul>
+  </div>
 </template>
 
 <script setup lang="ts">
