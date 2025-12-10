@@ -3,12 +3,12 @@ import type NavigationVue from "~/components/navigation/Navigation.vue";
 </script>
 
 <template>
-  <UDashboardGroup>
+  <UDashboardGroup class="h-screen overflow-hidden">
     <UDashboardSidebar>
       <img src="/assets/images/logo-placeholder.png" class="mt-4" />
       <Navigation />
     </UDashboardSidebar>
-    <UDashboardPanel>
+    <UDashboardPanel class="flex flex-col">
       <UDashboardNavbar
         title="Dashboard"
         :toggle="{
@@ -53,7 +53,7 @@ import type NavigationVue from "~/components/navigation/Navigation.vue";
           </UPopover>
         </template>
       </UDashboardNavbar>
-      <UMain class="p-6">
+      <UMain class="p-6 flex-1 overflow-auto">
         <slot></slot>
       </UMain>
     </UDashboardPanel>
