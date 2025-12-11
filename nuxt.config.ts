@@ -10,4 +10,9 @@ export default defineNuxtConfig({
   },
   modules: ["@nuxt/ui", "@pinia/nuxt"],
   css: ["~/assets/css/main.css"],
+  runtimeConfig: {
+    public: {
+      apiBase: process.env.API_URL || "http://127.0.0.1:8000/api/",
+    },
+  },
 });

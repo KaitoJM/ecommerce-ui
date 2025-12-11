@@ -6,7 +6,11 @@
       <NewProductsAdded30daysVue />
       <OutOfStockProductsVue />
     </div>
-    <RecordListVue class="mt-4" :data="data" :columns="columns">
+    <RecordListVue
+      class="mt-4"
+      :data="productStore.productList"
+      :columns="columns"
+    >
       <template #headerAction>
         <UButton variant="outline" color="primary" icon="i-lucide-plus">
           Add Product
@@ -19,19 +23,31 @@
 <script setup lang="ts">
 import { h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
+import type { DropdownMenuItem } from "@nuxt/ui";
 import RecordListVue from "~/components/ui/RecordList.vue";
 import TotalProductsVue from "~/components/dashboard/TotalProducts.vue";
 import TotalPublishedProductsVue from "~/components/dashboard/TotalPublishedProducts.vue";
 import NewProductsAdded30daysVue from "~/components/dashboard/NewProductsAdded30days.vue";
 import OutOfStockProductsVue from "~/components/dashboard/OutOfStockProducts.vue";
 import type { ProductListItem } from "~/types/Product.types";
+import { useProductStore } from "~/store/product.store";
+import { onMounted, ref } from "vue";
+import type { TableRow } from "@nuxt/ui";
 
 definePageMeta({
   layout: "main-template",
 });
 
+const productStore = useProductStore();
 const UCheckbox = resolveComponent("UCheckbox");
 const UBadge = resolveComponent("UBadge");
+const config = useRuntimeConfig();
+
+const api_url = ref(config.public.apiBase);
+
+onMounted(() => {
+  productStore.getProducts();
+});
 
 const data = ref<ProductListItem[]>([
   {
@@ -43,9 +59,9 @@ const data = ref<ProductListItem[]>([
     published: true,
     stock: 25,
     price: 999.99,
-    category: ["Electronics", "Mobile Phones"],
+    categories: ["Electronics", "Mobile Phones"],
     sku: "IP13PRO-256GB-BLU",
-    createdAt: "2023-10-01T10:15:30Z",
+    created_at: "2023-10-01T10:15:30Z",
   },
   {
     id: "4601",
@@ -56,9 +72,9 @@ const data = ref<ProductListItem[]>([
     published: true,
     stock: 40,
     price: 799.99,
-    category: ["Electronics", "Mobile Phones"],
+    categories: ["Electronics", "Mobile Phones"],
     sku: "SGS21-128GB-GRY",
-    createdAt: "2023-09-15T14:20:00Z",
+    created_at: "2023-09-15T14:20:00Z",
   },
   {
     id: "4602",
@@ -69,9 +85,9 @@ const data = ref<ProductListItem[]>([
     published: false,
     stock: 15,
     price: 349.99,
-    category: ["Electronics", "Audio"],
+    categories: ["Electronics", "Audio"],
     sku: "SONY-WH1000XM4-BLK",
-    createdAt: "2023-08-25T09:00:00Z",
+    created_at: "2023-08-25T09:00:00Z",
   },
   {
     id: "4603",
@@ -82,9 +98,9 @@ const data = ref<ProductListItem[]>([
     published: true,
     stock: 10,
     price: 1199.99,
-    category: ["Electronics", "Computers"],
+    categories: ["Electronics", "Computers"],
     sku: "DELL-XPS13-16GB-512GB",
-    createdAt: "2023-07-30T11:45:00Z",
+    created_at: "2023-07-30T11:45:00Z",
   },
 ]);
 
@@ -111,8 +127,8 @@ const columns: TableColumn<ProductListItem>[] = [
   {
     accessorKey: "name",
     header: "Product Name",
-    cell: ({ row }) => {
-      const categories: string[] = row.original.category;
+    cell: ({ row }: TableRow<ProductListItem>) => {
+      const categories: string[] = row.original.categories;
       return h("div", { class: "flex items-center gap-1" }, [
         h("img", {
           src: row.original.thumbnail,
@@ -146,7 +162,7 @@ const columns: TableColumn<ProductListItem>[] = [
   {
     accessorKey: "published",
     header: "Status",
-    cell: ({ row }) => {
+    cell: ({ row }: TableRow<ProductListItem>) => {
       const status: string = row.getValue("published") ? "published" : "draft";
 
       return h(
@@ -163,7 +179,7 @@ const columns: TableColumn<ProductListItem>[] = [
   {
     accessorKey: "price",
     header: "Declared Price",
-    cell: ({ row }) => {
+    cell: ({ row }: TableRow<ProductListItem>) => {
       const amount = Number.parseFloat(row.getValue("price"));
 
       const formatted = new Intl.NumberFormat("en-US", {
@@ -175,10 +191,10 @@ const columns: TableColumn<ProductListItem>[] = [
     },
   },
   {
-    accessorKey: "createdAt",
+    accessorKey: "created_at",
     header: "Created Date",
-    cell: ({ row }) => {
-      return new Date(row.getValue("createdAt")).toLocaleString("en-US", {
+    cell: ({ row }: TableRow<ProductListItem>) => {
+      return new Date(row.getValue("created_at")).toLocaleString("en-US", {
         day: "numeric",
         month: "short",
         hour: "2-digit",
@@ -190,12 +206,13 @@ const columns: TableColumn<ProductListItem>[] = [
   {
     accessorKey: "stock",
     header: () => h("div", { class: "text-right" }, "Stock"),
-    cell: ({ row }) => h("div", { class: "text-right" }, row.getValue("stock")),
+    cell: ({ row }: TableRow<ProductListItem>) =>
+      h("div", { class: "text-right" }, row.getValue("stock")),
   },
   {
     accessorKey: "id",
     header: () => h("div", { class: "text-right" }, "Action"),
-    cell: ({ row }) => {
+    cell: ({ row }: TableRow<ProductListItem>) => {
       const id = row.original.id;
 
       const items: DropdownMenuItem[] = [
@@ -224,8 +241,6 @@ const columns: TableColumn<ProductListItem>[] = [
           h(
             UButton,
             {
-              size: "sm",
-              variant: "outline",
               color: "primary",
               onClick: () => {
                 handleViewDetails(id);
@@ -235,8 +250,6 @@ const columns: TableColumn<ProductListItem>[] = [
           ),
           h(UDropdownMenu, { items: items }, [
             h(UButton, {
-              size: "sm",
-              variant: "outline",
               color: "primary",
               icon: "i-lucide-chevron-down",
             }),
