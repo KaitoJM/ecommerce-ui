@@ -7,25 +7,15 @@
       description="You can change the primary color in your app config."
       icon="i-lucide-terminal"
     />
-    <UTable
-      ref="table"
-      sticky
-      v-model:row-selection="rowSelection"
-      :data="data"
-      :columns="columns"
-    />
-
-    <div class="px-4 py-3.5 border-t border-accented text-sm text-muted">
-      {{ table?.tableApi?.getFilteredSelectedRowModel().rows.length || 0 }} of
-      {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} row(s)
-      selected.
-    </div>
+    <RecordListVue :data="data" :columns="columns" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
+import RecordListVue from "~/components/ui/RecordList.vue";
+import type { ProductListItem } from "~/types/Product.types";
 
 definePageMeta({
   layout: "main-template",
@@ -34,88 +24,62 @@ definePageMeta({
 const UCheckbox = resolveComponent("UCheckbox");
 const UBadge = resolveComponent("UBadge");
 
-type Payment = {
-  id: string;
-  date: string;
-  status: "paid" | "failed" | "refunded";
-  email: string;
-  amount: number;
-};
-
-const data = ref<Payment[]>([
+const data = ref<ProductListItem[]>([
   {
     id: "4600",
-    date: "2024-03-11T15:30:00",
-    status: "paid",
-    email: "james.anderson@example.com",
-    amount: 594,
+    name: "iPhone 13 Pro",
+    summary: "The latest iPhone with advanced features.",
+    thumbnail:
+      "https://d1rlzxa98cyc61.cloudfront.net/catalog/product/cache/1801c418208f9607a371e61f8d9184d9/1/7/177270_2020.jpg",
+    published: true,
+    stock: 25,
+    price: 999.99,
+    category: ["Electronics", "Mobile Phones"],
+    sku: "IP13PRO-256GB-BLU",
+    createdAt: "2023-10-01T10:15:30Z",
   },
   {
-    id: "4599",
-    date: "2024-03-11T10:10:00",
-    status: "failed",
-    email: "mia.white@example.com",
-    amount: 276,
+    id: "4601",
+    name: "Samsung Galaxy S21",
+    summary: "High-end Android smartphone with great performance.",
+    thumbnail:
+      "https://d1rlzxa98cyc61.cloudfront.net/catalog/product/cache/1801c418208f9607a371e61f8d9184d9/1/7/174359_2020_5.jpg",
+    published: true,
+    stock: 40,
+    price: 799.99,
+    category: ["Electronics", "Mobile Phones"],
+    sku: "SGS21-128GB-GRY",
+    createdAt: "2023-09-15T14:20:00Z",
   },
   {
-    id: "4598",
-    date: "2024-03-11T08:50:00",
-    status: "refunded",
-    email: "william.brown@example.com",
-    amount: 315,
+    id: "4602",
+    name: "Sony WH-1000XM4",
+    summary: "Industry-leading noise canceling headphones.",
+    thumbnail:
+      "https://www.sony.com.ph/image/5d02da5df552836db894cead8a68f5f3?fmt=pjpeg&wid=330&bgcolor=FFFFFF&bgc=FFFFFF",
+    published: false,
+    stock: 15,
+    price: 349.99,
+    category: ["Electronics", "Audio"],
+    sku: "SONY-WH1000XM4-BLK",
+    createdAt: "2023-08-25T09:00:00Z",
   },
   {
-    id: "4597",
-    date: "2024-03-10T19:45:00",
-    status: "paid",
-    email: "emma.davis@example.com",
-    amount: 529,
-  },
-  {
-    id: "4596",
-    date: "2024-03-10T15:55:00",
-    status: "paid",
-    email: "ethan.harris@example.com",
-    amount: 639,
-  },
-  {
-    id: "4600",
-    date: "2024-03-11T15:30:00",
-    status: "paid",
-    email: "james.anderson@example.com",
-    amount: 594,
-  },
-  {
-    id: "4599",
-    date: "2024-03-11T10:10:00",
-    status: "failed",
-    email: "mia.white@example.com",
-    amount: 276,
-  },
-  {
-    id: "4598",
-    date: "2024-03-11T08:50:00",
-    status: "refunded",
-    email: "william.brown@example.com",
-    amount: 315,
-  },
-  {
-    id: "4597",
-    date: "2024-03-10T19:45:00",
-    status: "paid",
-    email: "emma.davis@example.com",
-    amount: 529,
-  },
-  {
-    id: "4596",
-    date: "2024-03-10T15:55:00",
-    status: "paid",
-    email: "ethan.harris@example.com",
-    amount: 639,
+    id: "4603",
+    name: "Dell XPS 13 Laptop",
+    summary: "Compact and powerful laptop for professionals.",
+    thumbnail:
+      "https://benson.ph/cdn/shop/products/xs9320nt-xnb-shot-5-1-sl_17736ffe-5f73-4b36-ac0c-c7797b735c91.jpg?v=1674270544",
+    published: true,
+    stock: 10,
+    price: 1199.99,
+    category: ["Electronics", "Computers"],
+    sku: "DELL-XPS13-16GB-512GB",
+    createdAt: "2023-07-30T11:45:00Z",
   },
 ]);
 
-const columns: TableColumn<Payment>[] = [
+const columns: TableColumn<ProductListItem>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -136,10 +100,82 @@ const columns: TableColumn<Payment>[] = [
       }),
   },
   {
-    accessorKey: "date",
-    header: "Date",
+    accessorKey: "name",
+    header: "Product Name",
     cell: ({ row }) => {
-      return new Date(row.getValue("date")).toLocaleString("en-US", {
+      return h("div", { class: "flex items-center gap-1" }, [
+        h("img", {
+          src: row.original.thumbnail,
+          alt: row.getValue("name"),
+          class: "w-10 h-10 object-cover rounded mr-4 mb-2",
+        }),
+        h("div", { class: "flex flex-col" }, [
+          h("p", { class: "font-medium" }, row.getValue("name")),
+          h("p", { class: "text-sm text-gray-500" }, row.original.summary),
+        ]),
+      ]);
+    },
+  },
+  {
+    accessorKey: "published",
+    header: "Status",
+    cell: ({ row }) => {
+      const status: string = row.getValue("published") ? "published" : "draft";
+
+      return h(
+        UBadge,
+        {
+          class: "capitalize",
+          variant: "subtle",
+          color: row.getValue("published") ? "success" : "neutral",
+        },
+        () => status
+      );
+    },
+  },
+  {
+    accessorKey: "category",
+    header: "Category",
+    cell: ({ row }) => {
+      const categories: string[] = row.getValue("category");
+      return h(
+        "div",
+        { class: "flex flex-wrap gap-1" },
+        categories.map((cat) =>
+          h(
+            UBadge,
+            {
+              class: "text-xs rounded-full",
+              key: cat,
+              variant: "subtle",
+              color: "neutral",
+            },
+            () => cat
+          )
+        )
+      );
+    },
+  },
+
+  {
+    accessorKey: "price",
+    header: "Declared Price",
+    cell: ({ row }) => {
+      const amount = Number.parseFloat(row.getValue("price"));
+
+      const formatted = new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "PHP",
+      }).format(amount);
+
+      return h("div", { class: "text-right font-medium" }, formatted);
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: "Created Date",
+    cell: ({ row }) => {
+      return new Date(row.getValue("createdAt")).toLocaleString("en-US", {
         day: "numeric",
         month: "short",
         hour: "2-digit",
@@ -149,41 +185,74 @@ const columns: TableColumn<Payment>[] = [
     },
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => {
-      const color = {
-        paid: "success" as const,
-        failed: "error" as const,
-        refunded: "neutral" as const,
-      }[row.getValue("status") as string];
-
-      return h(UBadge, { class: "capitalize", variant: "subtle", color }, () =>
-        row.getValue("status")
-      );
-    },
+    accessorKey: "stock",
+    header: () => h("div", { class: "text-right" }, "Stock"),
+    cell: ({ row }) => h("div", { class: "text-right" }, row.getValue("stock")),
   },
   {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "amount",
-    header: () => h("div", { class: "text-right" }, "Amount"),
+    accessorKey: "id",
+    header: () => h("div", { class: "text-right" }, "Action"),
     cell: ({ row }) => {
-      const amount = Number.parseFloat(row.getValue("amount"));
+      const id = row.original.id;
 
-      const formatted = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "EUR",
-      }).format(amount);
+      const items: DropdownMenuItem[] = [
+        {
+          label: "Manage product",
+          icon: "i-lucide-settings",
+          onClick: () => handleEditProduct(id),
+        },
+        {
+          label: "Duplicate product",
+          icon: "i-lucide-copy",
+          onClick: () => handleDuplicateProduct(id),
+        },
+        {
+          label: "Delete product",
+          icon: "i-lucide-trash",
+          color: "error",
+          onClick: () => handleDeleteProduct(id),
+        },
+      ];
 
-      return h("div", { class: "text-right font-medium" }, formatted);
+      return h(UFieldGroup, {}, [
+        h(
+          UButton,
+          {
+            size: "sm",
+            variant: "outline",
+            color: "primary",
+            onClick: () => {
+              handleViewDetails(id);
+            },
+          },
+          () => "Details"
+        ),
+        h(UDropdownMenu, { items: items }, [
+          h(UButton, {
+            size: "sm",
+            variant: "outline",
+            color: "primary",
+            icon: "i-lucide-chevron-down",
+          }),
+        ]),
+      ]);
     },
   },
 ];
 
-const table = useTemplateRef("table");
+const handleViewDetails = (productId: string) => {
+  console.log("View details for product ID:", productId);
+};
 
-const rowSelection = ref({ 1: true });
+const handleEditProduct = (productId: string) => {
+  console.log("Edit product ID:", productId);
+};
+
+const handleDuplicateProduct = (productId: string) => {
+  console.log("Duplicate product ID:", productId);
+};
+
+const handleDeleteProduct = (productId: string) => {
+  console.log("Delete product ID:", productId);
+};
 </script>
