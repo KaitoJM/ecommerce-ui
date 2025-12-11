@@ -10,6 +10,10 @@
       class="mt-4"
       :data="productStore.productList"
       :columns="columns"
+      :pageMeta="productStore.pageMeta"
+      :pageLinks="productStore.links"
+      :loading="productStore.fetching"
+      @update:page="handlePageUpdate"
     >
       <template #headerAction>
         <UButton variant="outline" color="primary" icon="i-lucide-plus">
@@ -42,11 +46,17 @@ const productStore = useProductStore();
 const UCheckbox = resolveComponent("UCheckbox");
 const UBadge = resolveComponent("UBadge");
 const config = useRuntimeConfig();
+const router = useRouter();
 
 const api_url = ref(config.public.apiBase);
 
 onMounted(() => {
-  productStore.getProducts();
+  if (router.currentRoute.value.query.page) {
+    const page = parseInt(router.currentRoute.value.query.page as string) || 1;
+    productStore.getProducts({ page: page });
+  } else {
+    productStore.getProducts();
+  }
 });
 
 const columns: TableColumn<ProductListItem>[] = [
@@ -219,5 +229,9 @@ const handleDuplicateProduct = (productId: string) => {
 
 const handleDeleteProduct = (productId: string) => {
   console.log("Delete product ID:", productId);
+};
+
+const handlePageUpdate = (page: number) => {
+  productStore.getProducts({ page: page });
 };
 </script>

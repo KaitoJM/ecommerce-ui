@@ -41,6 +41,9 @@
       v-model:row-selection="rowSelection"
       :data="data"
       :columns="columns"
+      :loading="loading"
+      loading-color="primary"
+      loading-animation="carousel"
     />
 
     <div
@@ -51,18 +54,31 @@
         {{ table?.tableApi?.getFilteredRowModel().rows.length || 0 }} row(s)
         selected.
       </div>
-      <UPagination v-model:page="page" :total="100" />
+      <PaginationVue
+        :page-meta="pageMeta"
+        :links="pageLinks"
+        :query="query"
+        @update:page="handleUpdatePage"
+      />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import type { DropdownMenuItem } from "@nuxt/ui/runtime/components/DropdownMenu.vue.js";
+import PaginationVue, { type ArrowLink } from "./Pagination.vue";
+import type { PageMeta } from "./Pagination.vue";
+import { ref } from "vue";
+
+const props = defineProps<{
   data: Array<any>;
   columns: Array<any>;
+  pageMeta: PageMeta;
+  pageLinks: ArrowLink;
+  query?: string;
+  loading?: boolean;
 }>();
 
-const page = ref(5);
 const table = useTemplateRef("table");
 const rowSelection = ref({});
 
@@ -78,5 +94,13 @@ const SelectedOptionItems: DropdownMenuItem[] = [
 const handleDeleteSelected = () => {
   const selectedRows = table.value?.tableApi?.getSelectedRowModel().rows;
   console.log("Deleting rows: ", selectedRows);
+};
+
+const emit = defineEmits<{
+  (e: "update:page", page: number): void;
+}>();
+
+const handleUpdatePage = (page: number) => {
+  emit("update:page", page);
 };
 </script>

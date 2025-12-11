@@ -1,12 +1,18 @@
+import { page } from "#build/ui";
+import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
+import type { PaginationParams } from "~/types/Global.types";
 import type { Product } from "~/types/Product.types";
 
 type ApiResponseProduct = {
   data: Product[];
+  meta: PageMeta;
+  links: ArrowLink;
 };
 
 const config = useRuntimeConfig();
 
 export const useProductStore = defineStore("productStore", () => {
+  const fetching = ref<boolean>(false);
   const products = ref<Product[]>([]);
 
   const productList = computed(() => {
@@ -30,17 +36,48 @@ export const useProductStore = defineStore("productStore", () => {
     }));
   });
 
-  const getProducts = async () => {
+  const pageMeta = ref<PageMeta>({
+    current_page: 1,
+    from: 0,
+    last_page: 1,
+    per_page: 10,
+    to: 0,
+    total: 0,
+    links: {
+      url: null,
+      label: "",
+      active: false,
+      page: 1,
+    },
+  });
+
+  const links = ref<ArrowLink>({
+    first: null,
+    last: null,
+    prev: null,
+    next: null,
+  });
+
+  const getProducts = async (paginationParams?: PaginationParams) => {
     // const token = localStorage.getItem("token");
 
     // if (!token) {
     //   products.value = [];
     //   return;
     // }
+    fetching.value = true;
+
+    let pageQuery;
+    if (paginationParams) {
+      pageQuery = `?page=${paginationParams.page}`;
+      if (paginationParams.per_page) {
+        pageQuery += `&per_page=${paginationParams.per_page}`;
+      }
+    }
 
     try {
       const res: ApiResponseProduct = await $fetch(
-        `${config.public.apiBase}/products`
+        `${config.public.apiBase}/products${pageQuery}`
         // {
         //   headers: {
         //     Authorization: `Bearer ${token}`,
@@ -49,15 +86,21 @@ export const useProductStore = defineStore("productStore", () => {
       );
 
       products.value = res.data;
+      pageMeta.value = res.meta;
+      fetching.value = false;
+      links.value = res.links;
     } catch (error) {
       console.error("Failed to fetch products:", error);
-      products.value = [];
+      fetching.value = false;
     }
   };
 
   return {
     products,
+    fetching,
     productList,
+    pageMeta,
+    links,
     getProducts,
   };
 });
