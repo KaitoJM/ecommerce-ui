@@ -52,6 +52,37 @@ export const useNavigationStore = defineStore("navigationStore", () => {
           path: "carts",
           icon: "i-lucide-shopping-bag",
         },
+        {
+          title: "Invoices",
+          path: "invoices",
+          icon: "i-lucide-file-text",
+        },
+        {
+          title: "Vouchers",
+          path: "vouchers",
+          icon: "i-lucide-gift",
+        },
+      ],
+    },
+    {
+      title: "Customers",
+      icon: "i-lucide-users",
+      children: [
+        {
+          title: "Customer List",
+          path: "/customers",
+          icon: "i-lucide-user",
+        },
+        {
+          title: "Groups",
+          path: "/customer-groups",
+          icon: "i-lucide-users",
+        },
+        {
+          title: "Messages",
+          path: "/customer-messages",
+          icon: "i-lucide-message-circle",
+        },
       ],
     },
   ]);

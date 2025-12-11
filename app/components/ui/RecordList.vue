@@ -64,7 +64,7 @@ defineProps<{
 
 const page = ref(5);
 const table = useTemplateRef("table");
-const rowSelection = ref({ 1: true });
+const rowSelection = ref({});
 
 const SelectedOptionItems: DropdownMenuItem[] = [
   {
