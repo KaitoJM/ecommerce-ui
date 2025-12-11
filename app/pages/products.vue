@@ -1,13 +1,18 @@
 <template>
   <div class="flex flex-col gap-2">
-    <UAlert
-      color="neutral"
-      variant="subtle"
-      title="Heads up!"
-      description="You can change the primary color in your app config."
-      icon="i-lucide-terminal"
-    />
-    <RecordListVue :data="data" :columns="columns" />
+    <div class="flex items-center gap-4">
+      <TotalProductsVue />
+      <TotalPublishedProductsVue />
+      <NewProductsAdded30daysVue />
+      <OutOfStockProductsVue />
+    </div>
+    <RecordListVue class="mt-4" :data="data" :columns="columns">
+      <template #headerAction>
+        <UButton variant="outline" color="primary" icon="i-lucide-plus">
+          Add Product
+        </UButton>
+      </template>
+    </RecordListVue>
   </div>
 </template>
 
@@ -15,6 +20,10 @@
 import { h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 import RecordListVue from "~/components/ui/RecordList.vue";
+import TotalProductsVue from "~/components/dashboard/TotalProducts.vue";
+import TotalPublishedProductsVue from "~/components/dashboard/TotalPublishedProducts.vue";
+import NewProductsAdded30daysVue from "~/components/dashboard/NewProductsAdded30days.vue";
+import OutOfStockProductsVue from "~/components/dashboard/OutOfStockProducts.vue";
 import type { ProductListItem } from "~/types/Product.types";
 
 definePageMeta({
@@ -208,28 +217,32 @@ const columns: TableColumn<ProductListItem>[] = [
         },
       ];
 
-      return h(UFieldGroup, {}, [
-        h(
-          UButton,
-          {
-            size: "sm",
-            variant: "outline",
-            color: "primary",
-            onClick: () => {
-              handleViewDetails(id);
+      return h(
+        "div",
+        { class: "text-right" },
+        h(UFieldGroup, {}, [
+          h(
+            UButton,
+            {
+              size: "sm",
+              variant: "outline",
+              color: "primary",
+              onClick: () => {
+                handleViewDetails(id);
+              },
             },
-          },
-          () => "Details"
-        ),
-        h(UDropdownMenu, { items: items }, [
-          h(UButton, {
-            size: "sm",
-            variant: "outline",
-            color: "primary",
-            icon: "i-lucide-chevron-down",
-          }),
-        ]),
-      ]);
+            () => "Details"
+          ),
+          h(UDropdownMenu, { items: items }, [
+            h(UButton, {
+              size: "sm",
+              variant: "outline",
+              color: "primary",
+              icon: "i-lucide-chevron-down",
+            }),
+          ]),
+        ])
+      );
     },
   },
 ];
