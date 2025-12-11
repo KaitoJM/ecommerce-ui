@@ -15,6 +15,17 @@
       :loading="productStore.fetching"
       @update:page="handlePageUpdate"
     >
+      <template #headerLeft>
+        <UInput
+          v-model="searchKeyword"
+          icon="i-lucide-search"
+          class="w-80"
+          size="md"
+          variant="outline"
+          placeholder="Search products..."
+          @keyup="handleSearchKeyup"
+        />
+      </template>
       <template #headerAction>
         <UButton variant="outline" color="primary" icon="i-lucide-plus">
           Add Product
@@ -37,6 +48,7 @@ import type { ProductListItem } from "~/types/Product.types";
 import { useProductStore } from "~/store/product.store";
 import { onMounted, ref } from "vue";
 import type { TableRow } from "@nuxt/ui";
+import { useDebounceFn } from "@vueuse/core";
 
 definePageMeta({
   layout: "main-template",
@@ -45,20 +57,27 @@ definePageMeta({
 const productStore = useProductStore();
 const UCheckbox = resolveComponent("UCheckbox");
 const UBadge = resolveComponent("UBadge");
-const config = useRuntimeConfig();
 const router = useRouter();
 
-const api_url = ref(config.public.apiBase);
-
-onMounted(() => {
-  if (router.currentRoute.value.query.page) {
-    const page = parseInt(router.currentRoute.value.query.page as string) || 1;
-    productStore.getProducts({ page: page });
-  } else {
-    productStore.getProducts();
+const routeQueryPage = computed<number>(() => {
+  if (router.currentRoute.value.query?.page) {
+    return Number(router.currentRoute.value.query.page);
   }
+  return 1;
 });
 
+onMounted(() => {
+  productStore.getProducts({ page: routeQueryPage.value });
+});
+
+// search keyword
+const searchKeyword = ref<string>("");
+
+const handleSearchKeyup = useDebounceFn(() => {
+  productStore.getProducts({ page: routeQueryPage.value }, searchKeyword.value);
+}, 400);
+
+// table columns
 const columns: TableColumn<ProductListItem>[] = [
   {
     id: "select",
@@ -71,7 +90,7 @@ const columns: TableColumn<ProductListItem>[] = [
           table.toggleAllPageRowsSelected(!!value),
         "aria-label": "Select all",
       }),
-    cell: ({ row }) =>
+    cell: ({ row }: TableRow<ProductListItem>) =>
       h(UCheckbox, {
         modelValue: row.getIsSelected(),
         "onUpdate:modelValue": (value: boolean | "indeterminate") =>

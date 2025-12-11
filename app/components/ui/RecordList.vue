@@ -1,13 +1,7 @@
 <template>
   <div class="flex flex-col gap-2">
     <div class="flex justify-between items-center">
-      <UInput
-        icon="i-lucide-search"
-        class="w-80"
-        size="md"
-        variant="outline"
-        placeholder="Search products..."
-      />
+      <slot name="headerLeft"></slot>
       <div class="flex items-center gap-2">
         <UFieldGroup>
           <UButton

@@ -58,7 +58,10 @@ export const useProductStore = defineStore("productStore", () => {
     next: null,
   });
 
-  const getProducts = async (paginationParams?: PaginationParams) => {
+  const getProducts = async (
+    paginationParams?: PaginationParams,
+    searchKey?: string
+  ) => {
     // const token = localStorage.getItem("token");
 
     // if (!token) {
@@ -73,6 +76,10 @@ export const useProductStore = defineStore("productStore", () => {
       if (paginationParams.per_page) {
         pageQuery += `&per_page=${paginationParams.per_page}`;
       }
+    }
+
+    if (searchKey) {
+      pageQuery += pageQuery ? `&search=${searchKey}` : `?search=${searchKey}`;
     }
 
     try {
