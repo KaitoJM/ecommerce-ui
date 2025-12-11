@@ -103,6 +103,7 @@ const columns: TableColumn<ProductListItem>[] = [
     accessorKey: "name",
     header: "Product Name",
     cell: ({ row }) => {
+      const categories: string[] = row.original.category;
       return h("div", { class: "flex items-center gap-1" }, [
         h("img", {
           src: row.original.thumbnail,
@@ -112,6 +113,23 @@ const columns: TableColumn<ProductListItem>[] = [
         h("div", { class: "flex flex-col" }, [
           h("p", { class: "font-medium" }, row.getValue("name")),
           h("p", { class: "text-sm text-gray-500" }, row.original.summary),
+          h(
+            "div",
+            { class: "flex flex-wrap gap-1 mt-1" },
+            categories.map((cat) =>
+              h(
+                UBadge,
+                {
+                  class: "rounded-full",
+                  key: cat,
+                  variant: "subtle",
+                  color: "neutral",
+                  size: "xs",
+                },
+                () => cat
+              )
+            )
+          ),
         ]),
       ]);
     },
@@ -133,30 +151,6 @@ const columns: TableColumn<ProductListItem>[] = [
       );
     },
   },
-  {
-    accessorKey: "category",
-    header: "Category",
-    cell: ({ row }) => {
-      const categories: string[] = row.getValue("category");
-      return h(
-        "div",
-        { class: "flex flex-wrap gap-1" },
-        categories.map((cat) =>
-          h(
-            UBadge,
-            {
-              class: "text-xs rounded-full",
-              key: cat,
-              variant: "subtle",
-              color: "neutral",
-            },
-            () => cat
-          )
-        )
-      );
-    },
-  },
-
   {
     accessorKey: "price",
     header: "Declared Price",
