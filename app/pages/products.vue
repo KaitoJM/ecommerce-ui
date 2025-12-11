@@ -49,61 +49,6 @@ onMounted(() => {
   productStore.getProducts();
 });
 
-const data = ref<ProductListItem[]>([
-  {
-    id: "4600",
-    name: "iPhone 13 Pro",
-    summary: "The latest iPhone with advanced features.",
-    thumbnail:
-      "https://d1rlzxa98cyc61.cloudfront.net/catalog/product/cache/1801c418208f9607a371e61f8d9184d9/1/7/177270_2020.jpg",
-    published: true,
-    stock: 25,
-    price: 999.99,
-    categories: ["Electronics", "Mobile Phones"],
-    sku: "IP13PRO-256GB-BLU",
-    created_at: "2023-10-01T10:15:30Z",
-  },
-  {
-    id: "4601",
-    name: "Samsung Galaxy S21",
-    summary: "High-end Android smartphone with great performance.",
-    thumbnail:
-      "https://d1rlzxa98cyc61.cloudfront.net/catalog/product/cache/1801c418208f9607a371e61f8d9184d9/1/7/174359_2020_5.jpg",
-    published: true,
-    stock: 40,
-    price: 799.99,
-    categories: ["Electronics", "Mobile Phones"],
-    sku: "SGS21-128GB-GRY",
-    created_at: "2023-09-15T14:20:00Z",
-  },
-  {
-    id: "4602",
-    name: "Sony WH-1000XM4",
-    summary: "Industry-leading noise canceling headphones.",
-    thumbnail:
-      "https://www.sony.com.ph/image/5d02da5df552836db894cead8a68f5f3?fmt=pjpeg&wid=330&bgcolor=FFFFFF&bgc=FFFFFF",
-    published: false,
-    stock: 15,
-    price: 349.99,
-    categories: ["Electronics", "Audio"],
-    sku: "SONY-WH1000XM4-BLK",
-    created_at: "2023-08-25T09:00:00Z",
-  },
-  {
-    id: "4603",
-    name: "Dell XPS 13 Laptop",
-    summary: "Compact and powerful laptop for professionals.",
-    thumbnail:
-      "https://benson.ph/cdn/shop/products/xs9320nt-xnb-shot-5-1-sl_17736ffe-5f73-4b36-ac0c-c7797b735c91.jpg?v=1674270544",
-    published: true,
-    stock: 10,
-    price: 1199.99,
-    categories: ["Electronics", "Computers"],
-    sku: "DELL-XPS13-16GB-512GB",
-    created_at: "2023-07-30T11:45:00Z",
-  },
-]);
-
 const columns: TableColumn<ProductListItem>[] = [
   {
     id: "select",

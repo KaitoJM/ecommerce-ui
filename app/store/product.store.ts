@@ -20,13 +20,13 @@ export const useProductStore = defineStore("productStore", () => {
       id: product.id,
       name: product.name,
       summary: product.summary,
-      thumbnail: "",
+      thumbnail: product.thumbnail,
       published: product.published ? true : false,
       price: product.specification.price,
       sku: "",
       stock: product.specification.stock,
       categories: product.categories.map((cat) => cat.name),
-      createdAt: product.created_at,
+      created_at: product.created_at,
     }));
   });
 
