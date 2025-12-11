@@ -1,15 +1,19 @@
 <template>
-  <UButton
-    :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
-    color="neutral"
-    variant="ghost"
-    :aria-label="`Switch to ${isDark ? 'light' : 'dark'} mode`"
-    @click="isDark = !isDark"
-  />
+  <ClientOnly v-if="!colorMode?.forced">
+    <UButton
+      :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
+      color="neutral"
+      variant="outline"
+      :aria-label="`Switch to ${isDark ? 'light' : 'dark'} mode`"
+      @click="isDark = !isDark"
+    >
+      {{ isDark ? "Dark" : "Light" }} Mode
+    </UButton>
 
-  <template #fallback>
-    <div class="size-8"></div>
-  </template>
+    <template #fallback>
+      <div class="size-8"></div>
+    </template>
+  </ClientOnly>
 </template>
 
 <script setup lang="ts">
