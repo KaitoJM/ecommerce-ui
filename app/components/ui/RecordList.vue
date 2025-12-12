@@ -63,6 +63,8 @@ import type { DropdownMenuItem } from "@nuxt/ui/runtime/components/DropdownMenu.
 import PaginationVue, { type ArrowLink } from "./Pagination.vue";
 import type { PageMeta } from "./Pagination.vue";
 import { ref } from "vue";
+import type { TableRow } from "@nuxt/ui";
+import ConfirmationDialog from "../dialogs/ConfirmationDialog.vue";
 
 const props = defineProps<{
   data: Array<any>;
@@ -76,6 +78,12 @@ const props = defineProps<{
 const table = useTemplateRef("table");
 const rowSelection = ref({});
 
+const selectedRowsId = computed<string[]>(() => {
+  return table.value?.tableApi
+    ?.getFilteredSelectedRowModel()
+    .rows.map((row: TableRow) => row.original.id.toString()) as string[];
+});
+
 const SelectedOptionItems: DropdownMenuItem[] = [
   {
     label: "Delete",
@@ -85,14 +93,26 @@ const SelectedOptionItems: DropdownMenuItem[] = [
   },
 ];
 
-const handleDeleteSelected = () => {
-  const selectedRows = table.value?.tableApi?.getSelectedRowModel().rows;
-  console.log("Deleting rows: ", selectedRows);
-};
-
 const emit = defineEmits<{
   (e: "update:page", page: number): void;
+  (e: "delete:multiple", ids: string[]): void;
 }>();
+
+//deletion
+const overlay = useOverlay();
+const deleteModel = overlay.create(ConfirmationDialog);
+
+const handleDeleteSelected = () => {
+  deleteModel.open({
+    title: "Delete Selected Records",
+    message: "Are you sure you want to delete these records?",
+    submessage: "Deleting records might also delete related data.",
+    onOk: () => {
+      if (selectedRowsId.value.length === 0) return;
+      emit("delete:multiple", selectedRowsId.value);
+    },
+  });
+};
 
 const handleUpdatePage = (page: number) => {
   emit("update:page", page);

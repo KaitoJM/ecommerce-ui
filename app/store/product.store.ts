@@ -62,12 +62,6 @@ export const useProductStore = defineStore("productStore", () => {
     paginationParams?: PaginationParams,
     searchKey?: string
   ) => {
-    // const token = localStorage.getItem("token");
-
-    // if (!token) {
-    //   products.value = [];
-    //   return;
-    // }
     fetching.value = true;
 
     let pageQuery;
@@ -85,11 +79,6 @@ export const useProductStore = defineStore("productStore", () => {
     try {
       const res: ApiResponseProduct = await $fetch(
         `${config.public.apiBase}/products${pageQuery}`
-        // {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // }
       );
 
       products.value = res.data;
@@ -102,6 +91,35 @@ export const useProductStore = defineStore("productStore", () => {
     }
   };
 
+  const deleteProduct = async (productId: string) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(
+        `Failed to delete product with ID ${productId}:`,
+        "No auth token found"
+      );
+      return;
+    }
+
+    try {
+      await $fetch(`${config.public.apiBase}/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      // Remove the deleted product from the products array
+      products.value = products.value.filter(
+        (product) => product.id !== productId
+      );
+    } catch (error) {
+      console.error(`Failed to delete product with ID ${productId}:`, error);
+    }
+  };
+
   return {
     products,
     fetching,
@@ -109,5 +127,6 @@ export const useProductStore = defineStore("productStore", () => {
     pageMeta,
     links,
     getProducts,
+    deleteProduct,
   };
 });

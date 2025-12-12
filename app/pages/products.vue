@@ -14,6 +14,7 @@
       :pageLinks="productStore.links"
       :loading="productStore.fetching"
       @update:page="handlePageUpdate"
+      @delete:multiple="handleDeleteProductMultiple"
     >
       <template #headerLeft>
         <UInput
@@ -252,5 +253,12 @@ const handleDeleteProduct = (productId: string) => {
 
 const handlePageUpdate = (page: number) => {
   productStore.getProducts({ page: page });
+};
+
+const handleDeleteProductMultiple = (ids: string[]) => {
+  ids.forEach(async (id) => {
+    console.log("Delete product ID:", id);
+    await productStore.deleteProduct(id);
+  });
 };
 </script>
