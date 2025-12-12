@@ -28,9 +28,14 @@
         />
       </template>
       <template #headerAction>
-        <UButton variant="outline" color="primary" icon="i-lucide-plus">
-          Add Product
-        </UButton>
+        <UModal>
+          <UButton variant="outline" color="primary" icon="i-lucide-plus">
+            Add Product
+          </UButton>
+          <template #content>
+            <ProductCreationFormVue />
+          </template>
+        </UModal>
       </template>
     </RecordListVue>
   </div>
@@ -50,6 +55,7 @@ import { useProductStore } from "~/store/product.store";
 import { onMounted, ref } from "vue";
 import type { TableRow } from "@nuxt/ui";
 import { useDebounceFn } from "@vueuse/core";
+import ProductCreationFormVue from "~/components/forms/ProductCreationForm.vue";
 
 definePageMeta({
   layout: "main-template",
@@ -241,6 +247,7 @@ const handleViewDetails = (productId: string) => {
 
 const handleEditProduct = (productId: string) => {
   console.log("Edit product ID:", productId);
+  router.push(`/products/manage/${productId}`);
 };
 
 const handleDuplicateProduct = (productId: string) => {

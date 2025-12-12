@@ -111,12 +111,29 @@ export const useNavigationStore = defineStore("navigationStore", () => {
    * Computed active page (recursive)
    */
   const activePage = computed(() => {
+    pageTitle.value = null; // reset the page title to null on every route change
     const route = useRoute();
-    return findActiveRecursive(navigation.value, route.path);
+    console.log(route.path);
+    return (
+      findActiveRecursive(navigation.value, route.path) ?? {
+        title: "",
+        path: route.path,
+      }
+    );
   });
+
+  const pageTitle = ref<string | null>(null);
+
+  const setPageTitle = (title: string) => {
+    setTimeout(() => {
+      pageTitle.value = title;
+    }, 100); // wait for route change before executing this change
+  };
 
   return {
     navigation,
     activePage,
+    pageTitle,
+    setPageTitle,
   };
 });

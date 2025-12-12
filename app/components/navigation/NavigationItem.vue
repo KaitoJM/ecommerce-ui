@@ -4,7 +4,7 @@
       :to="nav.path"
       :class="[
         'flex items-center gap-2 py-1 px-2',
-        navigationStore.activePage?.path === nav.path
+        isActive(nav)
           ? 'bg-primary-700 text-white rounded-md font-medium'
           : 'opacity-50 hover:opacity-100 rounded-md',
       ]"
@@ -27,4 +27,21 @@ defineProps<{
 }>();
 
 const navigationStore = useNavigationStore();
+
+const isActive = (nav: Navigation): boolean => {
+  const active = navigationStore.activePage?.path ?? "/";
+  const current = nav.path ?? "/";
+
+  if (!nav.path) {
+    return false;
+  }
+
+  if (current === "/") {
+    // homepage logic → strictly match
+    return active === current;
+  }
+
+  // default logic → startsWith
+  return active.startsWith(current);
+};
 </script>

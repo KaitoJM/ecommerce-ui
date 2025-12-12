@@ -1,6 +1,6 @@
 <template>
   <UDashboardNavbar
-    :title="navigationStore.activePage?.title || 'Dashboard'"
+    :title="pageTitle"
     :toggle="{
       color: 'primary',
       variant: 'subtle',
@@ -53,4 +53,17 @@ import { useNavigationStore } from "~/store/navigation.store";
 import ColorModeToggle from "./ColorModeToggle.vue";
 
 const navigationStore = useNavigationStore();
+
+const pageTitle = computed(() => {
+  if (navigationStore.pageTitle) {
+    return navigationStore.pageTitle;
+  } else if (
+    navigationStore.activePage?.title &&
+    navigationStore.activePage.title != ""
+  ) {
+    return navigationStore.activePage.title;
+  } else {
+    return "";
+  }
+});
 </script>
