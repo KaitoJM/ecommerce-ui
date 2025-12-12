@@ -243,11 +243,12 @@ const columns: TableColumn<ProductListItem>[] = [
 
 const handleViewDetails = (productId: string) => {
   console.log("View details for product ID:", productId);
+  router.push(`/products/${productId}/details`);
 };
 
 const handleEditProduct = (productId: string) => {
   console.log("Edit product ID:", productId);
-  router.push(`/products/manage/${productId}`);
+  router.push(`/products/${productId}/manage`);
 };
 
 const handleDuplicateProduct = (productId: string) => {

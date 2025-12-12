@@ -1,0 +1,166 @@
+<template>
+  <div class="max-w-[1000px] mx-auto">
+    <div class="flex flex-col gap-4 mt-4">
+      <div class="flex gap-8">
+        <div class="flex-1">
+          <UCarousel
+            v-slot="{ item }"
+            dots
+            :items="[
+              productFormStore.product.thumbnail,
+              productFormStore.product.thumbnail,
+            ]"
+            class="w-full mx-auto"
+          >
+            <img :src="item" class="rounded-lg" />
+          </UCarousel>
+        </div>
+        <div class="flex-1 flex flex-col gap-4">
+          <h1 class="text-3xl font-bold">
+            {{ productFormStore.product.name }}
+          </h1>
+          <p class="text-lg flex items-center gap-2 text-primary">
+            <span class="font-bold">{{
+              productFormStore.product.specification.price
+            }}</span>
+            <span class="text-xs">PHP</span>
+          </p>
+          <p class="text-sm opacity-80">
+            {{ productFormStore.product.summary }}<br />
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente
+            repellat porro est dolores laborum. Ut veniam eos distinctio, ea
+            amet ullam velit fuga reprehenderit asperiores ducimus libero quos
+            consequuntur fugit?
+          </p>
+          <ul class="border border-accented rounded-lg mt-4">
+            <li class="border-b border-accented py-2 px-4 flex justify-between">
+              Categories
+              <div
+                v-if="productFormStore.product?.categories?.length"
+                class="flex gap-2 items-center"
+              >
+                <UBadge
+                  variant="outline"
+                  color="neutral"
+                  v-for="(category, categoryIndex) in productFormStore.product
+                    .categories"
+                  :key="`category-${categoryIndex}-${category.id}`"
+                  >{{ category.name }}</UBadge
+                >
+              </div>
+            </li>
+            <li class="border-b border-accented py-2 px-4 flex justify-between">
+              Stock
+              <UBadge variant="outline" color="neutral">{{
+                productFormStore.product.specification.stock
+              }}</UBadge>
+            </li>
+            <li class="py-2 px-4 flex justify-between">
+              Brand
+              <UBadge variant="outline" color="neutral">Apple</UBadge>
+            </li>
+          </ul>
+          <div class="mt-4 flex flex-col gap-2">
+            <p class="font-bold uppercase text-xs opacity-80">Variants</p>
+            <div class="flex gap-4">
+              <div class="flex flex-col w-1/5 items-center">
+                <img
+                  :src="productFormStore.product.thumbnail"
+                  class="rounded-lg"
+                />
+                <div class="py-1 flex flex-col items-center">
+                  <div class="text-xs">13GB RAM</div>
+                  <div class="flex items-center gap-1">
+                    <span
+                      class="border border-accented w-3 h-3 rounded block"
+                      style="background-color: red"
+                    ></span>
+                    <p class="text-xs">Red</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col w-1/5 items-center">
+                <img
+                  :src="productFormStore.product.thumbnail"
+                  class="rounded-lg"
+                />
+                <div class="py-1 flex flex-col items-center">
+                  <div class="text-xs">13GB RAM</div>
+                  <div class="flex items-center gap-1">
+                    <span
+                      class="border border-accented w-3 h-3 rounded block"
+                      style="background-color: orange"
+                    ></span>
+                    <p class="text-xs">Orange</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex flex-col w-1/5 items-center">
+                <img
+                  :src="productFormStore.product.thumbnail"
+                  class="rounded-lg"
+                />
+                <div class="py-1 flex flex-col items-center">
+                  <div class="text-xs">13GB RAM</div>
+                  <div class="flex items-center gap-1">
+                    <span
+                      class="border border-accented w-3 h-3 rounded block"
+                      style="background-color: green"
+                    ></span>
+                    <p class="text-xs">Green</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <USeparator class="my-4" />
+      <div>
+        <p class="font-bold uppercase text-xs opacity-80">Description</p>
+        <br />
+        <div class="flex flex-col gap-4">
+          <p>{{ productFormStore.product.description }}</p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos, vel
+            illo praesentium odit hic reprehenderit numquam ipsum deserunt
+            tempora alias nostrum, eum, quia ut porro provident corporis.
+            Necessitatibus, illum adipisci. Lorem, ipsum dolor sit amet
+            consectetur adipisicing elit. Quod reiciendis asperiores neque quam
+            quo ut cumque sequi quisquam iure ab ullam facere distinctio, ad
+            expedita facilis perferendis! Rerum, consequatur consectetur!
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos, vel
+            illo praesentium odit hic reprehenderit numquam ipsum deserunt
+            tempora alias nostrum, eum, quia ut porro provident corporis.
+            Necessitatibus, illum adipisci. Lorem, ipsum dolor sit amet
+            consectetur adipisicing elit. Quod reiciendis asperiores neque quam
+            quo ut cumque sequi quisquam iure ab ullam facere distinctio, ad
+            expedita facilis perferendis! Rerum, consequatur consectetur!
+          </p>
+        </div>
+      </div>
+      <USeparator class="my-4" />
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { useNavigationStore } from "~/store/navigation.store";
+import { useProductFormStore } from "~/store/productForm.store";
+
+definePageMeta({
+  layout: "main-template",
+});
+
+const navigationStore = useNavigationStore();
+const productFormStore = useProductFormStore();
+const route = useRoute();
+
+await productFormStore.getProduct(route.params.id as string);
+
+onMounted(() => {
+  navigationStore.setPageTitle("Product Information");
+});
+</script>

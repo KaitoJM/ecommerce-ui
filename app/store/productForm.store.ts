@@ -15,7 +15,7 @@ export interface ProductInformationForm {
 const config = useRuntimeConfig();
 
 export const useProductFormStore = defineStore("productFormStore", () => {
-  const selectedProduct = ref<Product | null>(null);
+  const product = ref<Product | null>(null);
   const loadingProduct = ref<boolean>();
   const productInformation = ref<ProductInformationForm>({
     id: "",
@@ -35,19 +35,19 @@ export const useProductFormStore = defineStore("productFormStore", () => {
         `${config.public.apiBase}/products/${id}`
       );
 
-      selectedProduct.value = res;
+      product.value = res;
       loadingProduct.value = false;
 
       //product information
       productInformation.value = {
-        id: selectedProduct.value.id,
-        name: selectedProduct.value.name,
-        summary: selectedProduct.value.summary,
-        description: selectedProduct.value.description,
-        categories: selectedProduct.value.categories,
-        price: selectedProduct.value.specification.price,
-        stock: selectedProduct.value.specification.stock,
-        published: selectedProduct.value.published ? true : false,
+        id: product.value.id,
+        name: product.value.name,
+        summary: product.value.summary,
+        description: product.value.description,
+        categories: product.value.categories,
+        price: product.value.specification.price,
+        stock: product.value.specification.stock,
+        published: product.value.published ? true : false,
       };
     } catch (error) {
       console.error("Failed to fetch product information:", error);
@@ -56,7 +56,7 @@ export const useProductFormStore = defineStore("productFormStore", () => {
   };
 
   return {
-    selectedProduct,
+    product,
     loadingProduct,
     productInformation,
     getProduct,
