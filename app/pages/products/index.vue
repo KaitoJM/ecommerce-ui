@@ -55,7 +55,7 @@ import { useProductStore } from "~/store/product.store";
 import { onMounted, ref } from "vue";
 import type { TableRow } from "@nuxt/ui";
 import { useDebounceFn } from "@vueuse/core";
-import ProductCreationFormVue from "~/components/forms/ProductCreationForm.vue";
+import ProductCreationFormVue from "~/components/forms/product/ProductCreationForm.vue";
 
 definePageMeta({
   layout: "main-template",
