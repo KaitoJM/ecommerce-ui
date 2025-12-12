@@ -23,6 +23,7 @@ import { useProductFormStore } from "~/store/productForm.store";
 
 definePageMeta({
   layout: "main-template",
+  middleware: "auth",
 });
 
 const navigationStore = useNavigationStore();

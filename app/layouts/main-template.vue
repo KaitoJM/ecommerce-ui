@@ -1,9 +1,11 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import Logo from "~/components/ui/Logo.vue";
+</script>
 
 <template>
   <UDashboardGroup class="h-screen overflow-hidden">
     <UDashboardSidebar>
-      <img src="/assets/images/logo-placeholder.png" class="mt-4" />
+      <Logo class="my-2" />
       <Navigation />
     </UDashboardSidebar>
     <UDashboardPanel class="flex flex-col">

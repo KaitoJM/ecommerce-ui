@@ -51,6 +51,7 @@ import { useCategoryStore } from "~/store/category.store";
 
 definePageMeta({
   layout: "main-template",
+  middleware: "auth",
 });
 
 const categoryStore = useCategoryStore();

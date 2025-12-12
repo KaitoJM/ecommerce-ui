@@ -59,6 +59,7 @@ import ProductCreationFormVue from "~/components/forms/product/ProductCreationFo
 
 definePageMeta({
   layout: "main-template",
+  middleware: "auth",
 });
 
 const productStore = useProductStore();
