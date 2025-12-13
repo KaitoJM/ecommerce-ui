@@ -48,9 +48,9 @@ export const useProductStore = defineStore("productStore", () => {
       summary: product.summary,
       thumbnail: product.thumbnail,
       published: product.published ? true : false,
-      price: product.specification.price,
+      price: product?.specification?.price ?? "",
       sku: "",
-      stock: product.specification.stock,
+      stock: product?.specification?.stock ?? "",
       categories: product.categories.map((cat) => cat.name),
       created_at: product.created_at,
     }));
@@ -86,6 +86,7 @@ export const useProductStore = defineStore("productStore", () => {
 
       return res;
     } catch (error) {
+      fetching.value = false;
       const fetchError = error as FetchError<any>;
 
       const apiError: ApiError = {

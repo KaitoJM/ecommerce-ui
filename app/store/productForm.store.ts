@@ -52,8 +52,8 @@ export const useProductFormStore = defineStore("productFormStore", () => {
         summary: product.value.summary,
         description: product.value.description,
         categories: product.value.categories,
-        price: product.value.specification.price,
-        stock: product.value.specification.stock,
+        price: product.value?.specification?.price ?? "",
+        stock: product.value?.specification?.stock ?? "",
         published: product.value.published ? true : false,
       };
     } catch (error) {
@@ -82,6 +82,7 @@ export const useProductFormStore = defineStore("productFormStore", () => {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
+          body: params,
         }
       );
 

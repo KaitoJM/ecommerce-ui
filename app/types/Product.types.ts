@@ -20,7 +20,7 @@ export interface Product {
   published: string;
   thumbnail?: string;
   categories: Category[];
-  specification: ProductSpecification;
+  specification?: ProductSpecification;
   created_at: string;
 }
 

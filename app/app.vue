@@ -1,5 +1,5 @@
 <template>
-  <UApp>
+  <UApp toaster>
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
