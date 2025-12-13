@@ -21,7 +21,7 @@
         />
       </div>
       <div
-        class="flex-1 flex flex-col gap-4 flex-wrap border border-dashed border-accented p-4 rounded-lg min-h-[500px]"
+        class="flex-1 flex flex-col gap-4 flex-wrap border border-dashed border-accented p-4 rounded-lg min-h-125"
       >
         <UEmpty
           variant="naked"
