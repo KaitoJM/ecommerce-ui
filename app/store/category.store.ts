@@ -5,12 +5,6 @@ import type { PaginationParams } from "~/types/Global.types";
 import type { Category } from "~/types/Category.types";
 import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
 
-type ApiResponseCategories = {
-  data: Category[];
-  meta: PageMeta;
-  links: ArrowLink;
-};
-
 const config = useRuntimeConfig();
 
 export const useCategoryStore = defineStore("caegoryStore", () => {
