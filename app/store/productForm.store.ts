@@ -1,3 +1,5 @@
+import type { FetchError } from "ofetch";
+import type { ApiError, ApiSuccess } from "~/types/ApiResponses.types";
 import type { Category } from "~/types/Category.types";
 import type { Product } from "~/types/Product.types";
 
@@ -10,6 +12,11 @@ export interface ProductInformationForm {
   price: number;
   stock: number;
   published: boolean;
+}
+
+export interface ProductCreation {
+  name: string;
+  summary: string;
 }
 
 const config = useRuntimeConfig();
@@ -55,10 +62,52 @@ export const useProductFormStore = defineStore("productFormStore", () => {
     }
   };
 
+  const createProduct = async (params: ProductCreation): Promise<Product> => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(`Failed to create new product.`, "No auth token found");
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
+    try {
+      const response: ApiSuccess<Product> = await $fetch(
+        `${config.public.apiBase}/products`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(`Failed to create new product.:`, error);
+      throw apiError;
+    }
+  };
+
   return {
     product,
     loadingProduct,
     productInformation,
     getProduct,
+    createProduct,
   };
 });
