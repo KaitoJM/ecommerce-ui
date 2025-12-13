@@ -17,6 +17,8 @@ export interface ProductInformationForm {
 export interface ProductCreation {
   name: string;
   summary: string;
+  price: number;
+  stock: number;
 }
 
 const config = useRuntimeConfig();
@@ -52,8 +54,8 @@ export const useProductFormStore = defineStore("productFormStore", () => {
         summary: product.value.summary,
         description: product.value.description,
         categories: product.value.categories,
-        price: product.value?.specification?.price ?? "",
-        stock: product.value?.specification?.stock ?? "",
+        price: product.value?.specification?.price ?? 0,
+        stock: product.value?.specification?.stock ?? 0,
         published: product.value.published ? true : false,
       };
     } catch (error) {

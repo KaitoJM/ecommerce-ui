@@ -20,6 +20,19 @@
           class="w-full"
         />
       </UFormField>
+      <UFormField label="Pricing & Stock" hint="(Optional)">
+        <UFieldGroup>
+          <UBadge
+            color="neutral"
+            variant="outline"
+            size="lg"
+            label="Price (PHP)"
+          />
+          <UInput v-model="price" placeholder="0.00" class="w-full" />
+          <UBadge color="neutral" variant="outline" size="lg" label="Stock" />
+          <UInputNumber v-model="stock" placeholder="0" class="w-full" />
+        </UFieldGroup>
+      </UFormField>
     </div>
     <div class="py-4 px-6 border-t border-accented flex justify-end">
       <UButton type="submit" label="Create Product" variant="outline" />
@@ -37,12 +50,16 @@ const router = useRouter();
 const toast = useToast();
 const name = ref<string>("");
 const summary = ref<string>("");
+const price = ref<number>("");
+const stock = ref<number>("");
 
 const handleCreate = async () => {
   try {
     const added: Product = await productFormStore.createProduct({
       name: name.value,
       summary: summary.value,
+      price: price.value,
+      stock: stock.value,
     });
 
     toast.add({
