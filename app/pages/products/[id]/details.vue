@@ -6,27 +6,24 @@
           <UCarousel
             v-slot="{ item }"
             dots
-            :items="[
-              productFormStore.product.thumbnail,
-              productFormStore.product.thumbnail,
-            ]"
+            :items="imageSources"
             class="w-full mx-auto"
           >
-            <img :src="item" class="rounded-lg" />
+            <img :src="item" class="rounded-lg object-cover w-full h-[500px]" />
           </UCarousel>
         </div>
         <div class="flex-1 flex flex-col gap-4">
           <h1 class="text-3xl font-bold">
-            {{ productFormStore.product.name }}
+            {{ productFormStore.product?.name }}
           </h1>
           <p class="text-lg flex items-center gap-2 text-primary">
             <span class="font-bold">{{
-              productFormStore.product.specification.price
+              productFormStore.product?.specification?.price
             }}</span>
             <span class="text-xs">PHP</span>
           </p>
           <p class="text-sm opacity-80">
-            {{ productFormStore.product.summary }}<br />
+            {{ productFormStore.product?.summary }}<br />
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Sapiente
             repellat porro est dolores laborum. Ut veniam eos distinctio, ea
             amet ullam velit fuga reprehenderit asperiores ducimus libero quos
@@ -65,7 +62,7 @@
             <div class="flex gap-4">
               <div class="flex flex-col w-1/5 items-center">
                 <img
-                  :src="productFormStore.product.thumbnail"
+                  :src="productFormStore.product?.thumbnail"
                   class="rounded-lg"
                 />
                 <div class="py-1 flex flex-col items-center">
@@ -81,7 +78,7 @@
               </div>
               <div class="flex flex-col w-1/5 items-center">
                 <img
-                  :src="productFormStore.product.thumbnail"
+                  :src="productFormStore.product?.thumbnail"
                   class="rounded-lg"
                 />
                 <div class="py-1 flex flex-col items-center">
@@ -97,7 +94,7 @@
               </div>
               <div class="flex flex-col w-1/5 items-center">
                 <img
-                  :src="productFormStore.product.thumbnail"
+                  :src="productFormStore.product?.thumbnail"
                   class="rounded-lg"
                 />
                 <div class="py-1 flex flex-col items-center">
@@ -120,7 +117,7 @@
         <p class="font-bold uppercase text-xs opacity-80">Description</p>
         <br />
         <div class="flex flex-col gap-4">
-          <p>{{ productFormStore.product.description }}</p>
+          <p>{{ productFormStore.product?.description }}</p>
           <p>
             Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos, vel
             illo praesentium odit hic reprehenderit numquam ipsum deserunt
@@ -159,7 +156,23 @@ const navigationStore = useNavigationStore();
 const productFormStore = useProductFormStore();
 const route = useRoute();
 
+const imageSources = computed<string[]>(() => {
+  const productImages = productFormStore.productImages ?? [];
+
+  const cover =
+    productFormStore.product?.thumbnail ??
+    productImages.find((img) => img.cover)?.source ??
+    null;
+
+  const otherImages = productImages
+    .filter((img) => img.source !== cover)
+    .map((img) => img.source);
+
+  return cover ? [cover, ...otherImages] : otherImages;
+});
+
 await productFormStore.getProduct(route.params.id as string);
+await productFormStore.getProductImages(route.params.id as string);
 
 onMounted(() => {
   navigationStore.setPageTitle("Product Information");

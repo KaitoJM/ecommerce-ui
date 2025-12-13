@@ -21,7 +21,7 @@
             v-model="description"
             placeholder="Enter product description"
             class="w-full"
-            rows="15"
+            :rows="15"
           />
         </UFormField>
       </div>
