@@ -47,6 +47,7 @@ const tabItems = [
 
 await productFormStore.getProduct(route.params.id as string);
 await productFormStore.getProductImages(route.params.id as string);
+await productFormStore.getProductAttributes(route.params.id as string);
 
 onMounted(() => {
   navigationStore.setPageTitle("Manage Product");

@@ -17,13 +17,39 @@
         <p class="text-xs">
           If you did not see your prefered attribute from the list, You can add
           new by clicking
-          <NuxtLink class="text-primary">here</NuxtLink>.
+          <NuxtLink to="/attributes" class="text-primary">here</NuxtLink>.
         </p>
         <UEmpty
+          v-if="!productAttributes.length"
           icon="i-lucide-file"
           title="No selected attributes yet"
           description="You did not set any attribute for this product yet. it is requried that you set one or more attribute before we can generate a combinations for you."
         />
+        <table v-else class="border border-accented rounded-lg overflow-hidden">
+          <tr
+            v-for="(productAttribute, paIndex) in productAttributes"
+            :key="`product-attribute-item-${paIndex}-${productAttribute.id}`"
+          >
+            <td class="border border-dashed border-accented py-0.5 px-2">
+              <span class="opacity-70 text-sm">{{
+                productAttribute.attribute?.attribute
+              }}</span>
+            </td>
+            <td class="border border-dashed border-accented py-0.5 px-2">
+              {{ productAttribute.value }}
+            </td>
+            <td
+              class="border border-dashed border-accented py-0.5 px-2 text-right w-3"
+            >
+              <UButton
+                size="xs"
+                variant="ghost"
+                color="error"
+                icon="i-lucide-x"
+              />
+            </td>
+          </tr>
+        </table>
         <UButton
           label="Generate Combinations"
           variant="outline"
@@ -47,5 +73,16 @@
 </template>
 
 <script setup lang="ts">
-const attributeItems = ref(["Size", "Color", "Memory", "Storage"]);
+import { useAttributeStore } from "~/store/attribute.store";
+import { useProductFormStore } from "~/store/productForm.store";
+
+const productFormStore = useProductFormStore();
+const attributeStore = useAttributeStore();
+
+const attributeItems = computed(() =>
+  attributeStore.attributes.map((attr) => attr.attribute)
+);
+const productAttributes = computed(() => productFormStore.productAttributes);
+
+attributeStore.getAttributes({ page: 1, per_page: 100 });
 </script>

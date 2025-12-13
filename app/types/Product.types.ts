@@ -1,3 +1,4 @@
+import type { Attribute } from "./Attribute.types";
 import type { Category } from "./Category.types";
 
 interface ProductSpecification {
@@ -42,4 +43,13 @@ export interface ProductImage {
   product_id: string;
   source: string;
   cover: boolean;
+}
+
+export interface ProductAttribute {
+  id: string;
+  product_id: string;
+  attribute_id: string;
+  value: string;
+  color_value: string;
+  attribute?: Attribute;
 }
