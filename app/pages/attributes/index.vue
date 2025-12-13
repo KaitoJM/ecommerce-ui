@@ -110,7 +110,11 @@ const columns: TableColumn<AttributeListItem>[] = [
     accessorKey: "selection_type",
     header: "Selection Type",
     cell: ({ row }: TableRow<AttributeListItem>) =>
-      h("div", {}, row.getValue("selection_type")),
+      h(
+        UBadge,
+        { variant: "outline", color: "neutral" },
+        row.getValue("selection_type")
+      ),
   },
   {
     accessorKey: "created_at",
