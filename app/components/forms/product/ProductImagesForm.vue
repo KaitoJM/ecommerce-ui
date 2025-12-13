@@ -76,6 +76,8 @@
                   size="xs"
                   color="error"
                   variant="ghost"
+                  :loading="deletingImage == image.id"
+                  @click="handleDeleteImageClick(image.id)"
                 />
               </div>
             </div>
@@ -88,6 +90,7 @@
 
 <script setup lang="ts">
 import type { FetchError } from "ofetch";
+import ConfirmationDialog from "~/components/dialogs/ConfirmationDialog.vue";
 import { useProductFormStore } from "~/store/productForm.store";
 import type { ApiError, ApiSuccess } from "~/types/ApiResponses.types";
 
@@ -169,7 +172,6 @@ const upload = async (file: File) => {
 };
 
 const settingCover = ref<string | null>(null);
-
 const setCover = async (id: string) => {
   const token = localStorage.getItem("token");
 
@@ -214,6 +216,66 @@ const setCover = async (id: string) => {
 
     settingCover.value = null;
     console.error(`Failed to change product cover image: ${id}`, error);
+  }
+};
+
+const overlay = useOverlay();
+const deleteModel = overlay.create(ConfirmationDialog);
+const handleDeleteImageClick = (id: string) => {
+  deleteModel.open({
+    title: "Delete Product Image",
+    message: "Are you sure you want to delete this image from this product?",
+    onOk: () => {
+      deleteImage(id);
+    },
+  });
+};
+
+const deletingImage = ref<string | null>(null);
+const deleteImage = async (id: string) => {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    console.error(
+      `Failed to delete product image: ${id}`,
+      "No auth token found"
+    );
+    throw {
+      message: "Authentication required. Please log in again.",
+      statusCode: 401,
+    } satisfies ApiError;
+  }
+
+  deletingImage.value = id;
+
+  try {
+    const response = await $fetch(
+      `${config.public.apiBase}/product-images/${id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      }
+    );
+
+    deletingImage.value = null;
+    productFormStore.getProductImages(productID.value as string);
+  } catch (error) {
+    const fetchError = error as FetchError<any>;
+    toast.add({
+      title: "Error",
+      description:
+        fetchError.data?.message ??
+        fetchError.message ??
+        "Something went wrong",
+      icon: "i-lucide-octagon-x",
+      color: "error",
+    });
+
+    deletingImage.value = null;
+    console.error(`Failed to delete product image: ${id}`, error);
   }
 };
 </script>

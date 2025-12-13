@@ -22,7 +22,14 @@ const emit = defineEmits<{ close: [boolean]; ok: [boolean] }>();
           label="Cancel"
           @click="emit('close', false)"
         />
-        <UButton label="Proceed" variant="outline" @click="emit('ok', true)" />
+        <UButton
+          label="Proceed"
+          variant="outline"
+          @click="
+            emit('ok', true);
+            emit('close', false);
+          "
+        />
       </div>
     </template>
   </UModal>
