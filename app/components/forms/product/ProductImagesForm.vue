@@ -28,7 +28,7 @@
         <UEmpty
           v-if="!images.length"
           variant="naked"
-          class="my-auto"
+          class="m-auto"
           icon="i-lucide-image"
           title="No image found"
           description="It looks like you haven't added any images. Upload one to get started."
@@ -45,23 +45,23 @@
                 alt=""
                 class="h-32 w-full object-cover"
               />
-              <div class="p-2 bg-accented">
-                <UFieldGroup class="w-full">
-                  <UBadge
-                    v-if="image.cover"
-                    label="Cover"
-                    color="primary"
-                    icon="i-lucide-check"
-                    class="w-full flex justify-center font-bold"
-                  />
-                  <UButton
-                    v-else
-                    label="Set Cover"
-                    variant="outline"
-                    class="w-full flex justify-center"
-                  />
-                  <UButton icon="i-lucide-trash" color="error" />
-                </UFieldGroup>
+              <div class="p-1 bg-accented flex gap-1">
+                <UBadge
+                  v-if="image.cover"
+                  label="Cover"
+                  color="primary"
+                  icon="i-lucide-check"
+                  class="w-full flex justify-center font-bold"
+                />
+                <UButton
+                  v-else
+                  label="Set Cover"
+                  variant="outline"
+                  size="xs"
+                  color="neutral"
+                  class="w-full flex justify-center"
+                />
+                <UButton icon="i-lucide-trash" size="xs" color="error" />
               </div>
             </div>
           </div>
