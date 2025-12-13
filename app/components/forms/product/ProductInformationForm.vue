@@ -1,5 +1,5 @@
 <template>
-  <UForm class="flex flex-col gap-4">
+  <UForm @submit.prevent="handleUpdate" class="flex flex-col gap-4">
     <div class="flex gap-4 mt-4">
       <div class="flex-1 flex flex-col gap-4">
         <UFormField label="Product Name">
@@ -48,6 +48,8 @@
     </div>
     <div class="flex justify-end gap-4 border-t border-accented py-4">
       <UButton
+        :loading="loading"
+        type="submit"
         label="Save Product Information"
         icon="i-lucide-save"
         size="xl"
@@ -59,9 +61,13 @@
 
 <script setup lang="ts">
 import { useProductFormStore } from "~/store/productForm.store";
+import type { ApiError } from "~/types/ApiResponses.types";
+import type { Product } from "~/types/Product.types";
 
 const productFormStore = useProductFormStore();
+const toast = useToast();
 const brands = ref(["Apple", "Samsung", "HP", "LG"]);
+const loading = ref<boolean>(false);
 
 const name = computed({
   get: () => productFormStore.productInformation.name,
@@ -92,4 +98,31 @@ const published = computed({
   get: () => productFormStore.productInformation.published,
   set: (value) => (productFormStore.productInformation!.published = value),
 });
+
+const handleUpdate = async () => {
+  loading.value = true;
+  try {
+    const product: Product = await productFormStore.updateProductInformation();
+    console.log(product);
+
+    loading.value = false;
+
+    toast.add({
+      title: "Success",
+      description: `Product has been updated successfully.`,
+      icon: "i-lucide-info",
+    });
+  } catch (error: unknown) {
+    loading.value = false;
+
+    const apiError = error as ApiError;
+    toast.add({
+      title: "Error",
+      description: apiError.message,
+      icon: "i-lucide-octagon-x",
+      color: "error",
+    });
+    console.error(error);
+  }
+};
 </script>

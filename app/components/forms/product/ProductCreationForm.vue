@@ -50,8 +50,8 @@ const router = useRouter();
 const toast = useToast();
 const name = ref<string>("");
 const summary = ref<string>("");
-const price = ref<number>("");
-const stock = ref<number>("");
+const price = ref<number>(0);
+const stock = ref<number>(0);
 
 const handleCreate = async () => {
   try {

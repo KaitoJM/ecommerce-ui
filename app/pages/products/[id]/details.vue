@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[1000px] mx-auto">
+  <div class="max-w-250 mx-auto">
     <div class="flex flex-col gap-4 mt-4">
       <div class="flex gap-8">
         <div class="flex-1">

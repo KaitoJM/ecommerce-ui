@@ -106,11 +106,70 @@ export const useProductFormStore = defineStore("productFormStore", () => {
     }
   };
 
+  const updateProductInformation = async (): Promise<Product> => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(
+        `Failed to update product: ${productInformation.value.id}`,
+        "No auth token found"
+      );
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
+    try {
+      const response: ApiSuccess<Product> = await $fetch(
+        `${config.public.apiBase}/products/${productInformation.value.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: {
+            name: productInformation.value.name,
+            summary: productInformation.value.summary,
+            description: productInformation.value.description,
+            published: productInformation.value.published,
+            categories: productInformation.value.categories.map(
+              (item) => item.id
+            ),
+            price: productInformation.value.price,
+            stock: productInformation.value.stock,
+          },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(
+        `Failed to update product: ${productInformation.value.id}`,
+        error
+      );
+      throw apiError;
+    }
+  };
+
   return {
     product,
     loadingProduct,
     productInformation,
     getProduct,
     createProduct,
+    updateProductInformation,
   };
 });
