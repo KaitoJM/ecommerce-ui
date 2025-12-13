@@ -1,13 +1,12 @@
-import { page } from "#build/ui";
 import type { FetchError } from "ofetch";
 import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
 import type { PaginationParams } from "~/types/Global.types";
-import type { Category } from "~/types/Category.types";
 import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
+import type { Attribute } from "~/types/Attribute.types";
 
 const config = useRuntimeConfig();
 
-export const useCategoryStore = defineStore("categoryStore", () => {
+export const useAttributeStore = defineStore("attributeStore", () => {
   const pageMeta = ref<PageMeta>({
     current_page: 1,
     from: 0,
@@ -33,26 +32,38 @@ export const useCategoryStore = defineStore("categoryStore", () => {
   });
 
   const fetching = ref<boolean>(false);
-  const categories = ref<Category[]>([]);
+  const attributes = ref<Attribute[]>([]);
 
-  const categoryList = computed(() => {
-    if (!categories.value || categories.value.length === 0) {
+  const attributeList = computed(() => {
+    if (!attributes.value || attributes.value.length === 0) {
       return [];
     }
 
-    console.log("Mapping categories to categoryList:", categories.value);
+    console.log("Mapping attributed to attributeList:", attributes.value);
 
-    return categories.value.map((category) => ({
-      id: category.id,
-      name: category.name,
-      created_at: category.created_at,
+    return attributes.value.map((attribute) => ({
+      id: attribute.id,
+      selection_type: attribute.selection_type,
+      attribute: attribute.attribute,
+      created_at: attribute.created_at,
     }));
   });
 
-  const getCategories = async (
+  const getAttributes = async (
     paginationParams?: PaginationParams,
     searchKey?: string
-  ): Promise<ApiPaginated<Category>> => {
+  ): Promise<ApiPaginated<Attribute>> => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(`Failed to fetch attributes`, "No auth token found");
+
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
     fetching.value = true;
 
     let pageQuery;
@@ -68,11 +79,18 @@ export const useCategoryStore = defineStore("categoryStore", () => {
     }
 
     try {
-      const res: ApiPaginated<Category> = await $fetch(
-        `${config.public.apiBase}/categories${pageQuery}`
+      const res: ApiPaginated<Attribute> = await $fetch(
+        `${config.public.apiBase}/attributes${pageQuery}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
       );
 
-      categories.value = res.data;
+      attributes.value = res.data;
       pageMeta.value = res.meta;
       fetching.value = false;
       links.value = res.links;
@@ -91,20 +109,19 @@ export const useCategoryStore = defineStore("categoryStore", () => {
         statusCode: fetchError.status,
       };
 
-      console.error(`Failed to fetch categories:`, error);
+      console.error(`Failed to fetch attributes:`, error);
       throw apiError;
     }
   };
 
-  const deleteCategory = async (categoryId: string) => {
+  const deleteAttribute = async (attributeId: string) => {
     const token = localStorage.getItem("token");
 
     if (!token) {
       console.error(
-        `Failed to delete category with ID ${categoryId}:`,
+        `Failed to delete attribute with ID ${attributeId}:`,
         "No auth token found"
       );
-
       throw {
         message: "Authentication required. Please log in again.",
         statusCode: 401,
@@ -112,7 +129,7 @@ export const useCategoryStore = defineStore("categoryStore", () => {
     }
 
     try {
-      await $fetch(`${config.public.apiBase}/categories/${categoryId}`, {
+      await $fetch(`${config.public.apiBase}/attributes/${attributeId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -120,9 +137,9 @@ export const useCategoryStore = defineStore("categoryStore", () => {
         },
       });
 
-      // Remove the deleted category from the categories array
-      categories.value = categories.value.filter(
-        (category) => category.id !== categoryId
+      // Remove the deleted category from the attributes array
+      attributes.value = attributes.value.filter(
+        (attribute) => attribute.id !== attributeId
       );
     } catch (error) {
       const fetchError = error as FetchError<any>;
@@ -136,18 +153,21 @@ export const useCategoryStore = defineStore("categoryStore", () => {
         statusCode: fetchError.status,
       };
 
-      console.error(`Failed to delete category with ID ${categoryId}:`, error);
+      console.error(
+        `Failed to delete attribute with ID ${attributeId}:`,
+        error
+      );
       throw apiError;
     }
   };
 
   return {
-    categories,
+    attributes,
     fetching,
-    categoryList,
+    attributeList,
     pageMeta,
     links,
-    getCategories,
-    deleteCategory,
+    getAttributes,
+    deleteAttribute,
   };
 });
