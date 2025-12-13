@@ -1,3 +1,5 @@
+import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
+
 export type ApiSuccess<T> = {
   data: T;
   message?: string;
@@ -5,13 +7,8 @@ export type ApiSuccess<T> = {
 
 export type ApiPaginated<T> = {
   data: T[];
-  meta: {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-  };
-  links?: Record<string, string>;
+  meta: PageMeta;
+  links: ArrowLink;
 };
 
 export type ApiError = {

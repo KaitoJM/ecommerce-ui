@@ -1,7 +1,9 @@
 import { page } from "#build/ui";
+import type { FetchError } from "ofetch";
 import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
 import type { PaginationParams } from "~/types/Global.types";
 import type { Category } from "~/types/Category.types";
+import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
 
 type ApiResponseCategories = {
   data: Category[];
@@ -56,7 +58,7 @@ export const useCategoryStore = defineStore("caegoryStore", () => {
   const getCategories = async (
     paginationParams?: PaginationParams,
     searchKey?: string
-  ) => {
+  ): Promise<ApiPaginated<Category>> => {
     fetching.value = true;
 
     let pageQuery;
@@ -72,7 +74,7 @@ export const useCategoryStore = defineStore("caegoryStore", () => {
     }
 
     try {
-      const res: ApiResponseCategories = await $fetch(
+      const res: ApiPaginated<Category> = await $fetch(
         `${config.public.apiBase}/categories${pageQuery}`
       );
 
@@ -80,9 +82,23 @@ export const useCategoryStore = defineStore("caegoryStore", () => {
       pageMeta.value = res.meta;
       fetching.value = false;
       links.value = res.links;
+
+      return res;
     } catch (error) {
-      console.error("Failed to fetch categories:", error);
       fetching.value = false;
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(`Failed to fetch categories:`, error);
+      throw apiError;
     }
   };
 
@@ -111,7 +127,19 @@ export const useCategoryStore = defineStore("caegoryStore", () => {
         (category) => category.id !== categoryId
       );
     } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
       console.error(`Failed to delete category with ID ${categoryId}:`, error);
+      throw apiError;
     }
   };
 

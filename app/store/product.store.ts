@@ -1,13 +1,9 @@
 import { page } from "#build/ui";
+import type { FetchError } from "ofetch";
 import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
+import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
 import type { PaginationParams } from "~/types/Global.types";
 import type { Product } from "~/types/Product.types";
-
-type ApiResponseProducts = {
-  data: Product[];
-  meta: PageMeta;
-  links: ArrowLink;
-};
 
 const config = useRuntimeConfig();
 
@@ -63,7 +59,7 @@ export const useProductStore = defineStore("productStore", () => {
   const getProducts = async (
     paginationParams?: PaginationParams,
     searchKey?: string
-  ) => {
+  ): Promise<ApiPaginated<Product>> => {
     fetching.value = true;
 
     let pageQuery;
@@ -79,7 +75,7 @@ export const useProductStore = defineStore("productStore", () => {
     }
 
     try {
-      const res: ApiResponseProducts = await $fetch(
+      const res: ApiPaginated<Product> = await $fetch(
         `${config.public.apiBase}/products${pageQuery}`
       );
 
@@ -87,9 +83,22 @@ export const useProductStore = defineStore("productStore", () => {
       pageMeta.value = res.meta;
       fetching.value = false;
       links.value = res.links;
+
+      return res;
     } catch (error) {
-      console.error("Failed to fetch products:", error);
-      fetching.value = false;
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(`Failed to fetch products:`, error);
+      throw apiError;
     }
   };
 
@@ -118,7 +127,19 @@ export const useProductStore = defineStore("productStore", () => {
         (product) => product.id !== productId
       );
     } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
       console.error(`Failed to delete product with ID ${productId}:`, error);
+      throw apiError;
     }
   };
 
