@@ -19,8 +19,15 @@
           color="neutral"
           icon="i-lucide-upload"
           class="flex justify-center"
+          :loading="uploading"
           @click="handleUpload"
         />
+        <div v-if="uploading" class="flex flex-col gap-1">
+          <p class="text-xs">
+            Uploading {{ uploadCount }} of {{ file.length }}. Please wait...
+          </p>
+          <UProgress v-model="uploadCount" :max="file.length" />
+        </div>
       </div>
       <div
         class="flex-1 flex flex-wrap border border-dashed border-accented p-4 rounded-lg min-h-125"
@@ -50,18 +57,24 @@
                   v-if="image.cover"
                   label="Cover"
                   color="primary"
+                  variant="solid"
                   icon="i-lucide-check"
                   class="w-full flex justify-center font-bold"
                 />
                 <UButton
                   v-else
                   label="Set Cover"
-                  variant="outline"
+                  variant="soft"
                   size="xs"
-                  color="neutral"
+                  color="primary"
                   class="w-full flex justify-center"
                 />
-                <UButton icon="i-lucide-trash" size="xs" color="error" />
+                <UButton
+                  icon="i-lucide-trash"
+                  size="xs"
+                  color="error"
+                  variant="ghost"
+                />
               </div>
             </div>
           </div>
@@ -85,15 +98,26 @@ const images = computed({
 });
 
 const productID = computed(() => productFormStore.product?.id);
+const uploading = ref<boolean>(false);
+const uploadCount = ref(0);
 
 const handleUpload = async () => {
   if (!file.value.length) return;
   if (!productID) return;
 
-  await Promise.all(file.value.map((f: File) => upload(f)));
+  uploading.value = true;
+  uploadCount.value = 0;
+
+  await Promise.all(
+    file.value.map(async (f) => {
+      await upload(f);
+      uploadCount.value++;
+    })
+  );
 
   await productFormStore.getProductImages(productID.value as string);
   file.value = [];
+  uploading.value = false;
 };
 
 const config = useRuntimeConfig();
