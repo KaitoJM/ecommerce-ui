@@ -36,3 +36,10 @@ export interface ProductListItem {
   categories: string[];
   created_at: string;
 }
+
+export interface ProductImage {
+  id: string;
+  product_id: string;
+  source: string;
+  cover: boolean;
+}

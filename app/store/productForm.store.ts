@@ -1,7 +1,14 @@
 import type { FetchError } from "ofetch";
 import type { ApiError, ApiSuccess } from "~/types/ApiResponses.types";
 import type { Category } from "~/types/Category.types";
-import type { Product } from "~/types/Product.types";
+import type { Product, ProductImage } from "~/types/Product.types";
+
+export interface ProductCreation {
+  name: string;
+  summary: string;
+  price: number;
+  stock: number;
+}
 
 export interface ProductInformationForm {
   id: string;
@@ -14,11 +21,9 @@ export interface ProductInformationForm {
   published: boolean;
 }
 
-export interface ProductCreation {
-  name: string;
-  summary: string;
-  price: number;
-  stock: number;
+export interface ProductImagesForm {
+  id: string;
+  images: ProductImage[];
 }
 
 const config = useRuntimeConfig();
@@ -164,6 +169,53 @@ export const useProductFormStore = defineStore("productFormStore", () => {
     }
   };
 
+  const productImages = ref<ProductImage[]>([]);
+
+  const getProductImages = async (id: string): Promise<ProductImage[]> => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(`Failed to get product images.`, "No auth token found");
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
+    try {
+      const response: ApiSuccess<ProductImage[]> = await $fetch(
+        `${config.public.apiBase}/product-images`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          query: {
+            product_id: id,
+          },
+        }
+      );
+
+      productImages.value = response.data;
+      return response.data;
+    } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(`Failed to fetch product images:`, error);
+      throw apiError;
+    }
+  };
+
   return {
     product,
     loadingProduct,
@@ -171,5 +223,7 @@ export const useProductFormStore = defineStore("productFormStore", () => {
     getProduct,
     createProduct,
     updateProductInformation,
+    productImages,
+    getProductImages,
   };
 });
