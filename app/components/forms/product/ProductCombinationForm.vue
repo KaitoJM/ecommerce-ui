@@ -78,6 +78,7 @@
 import { useAttributeStore } from "~/store/attribute.store";
 import { useProductFormStore } from "~/store/productForm.store";
 import { useProductFormAttributeStore } from "~/store/productFormAttribute.store";
+import type { ProductAttribute } from "~/types/Product.types";
 
 const productFormStore = useProductFormStore();
 const productFormAttributeStore = useProductFormAttributeStore();
