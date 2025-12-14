@@ -66,12 +66,12 @@ export const useProductFormAttributeStore = defineStore(
       }
     };
 
-    const adding = ref<boolean>(false);
+    const addingAttribute = ref<boolean>(false);
     const createProductAttribute = async (
       params: ProductAttributeForm
     ): Promise<ProductAttribute> => {
       const token = localStorage.getItem("token");
-      adding.value = true;
+      addingAttribute.value = true;
 
       if (!token) {
         console.error(
@@ -97,11 +97,11 @@ export const useProductFormAttributeStore = defineStore(
           }
         );
 
-        adding.value = false;
+        addingAttribute.value = false;
         getProductAttributes(params.product_id);
         return response.data;
       } catch (error) {
-        adding.value = false;
+        addingAttribute.value = false;
         const fetchError = error as FetchError<any>;
 
         const apiError: ApiError = {
@@ -118,11 +118,61 @@ export const useProductFormAttributeStore = defineStore(
       }
     };
 
+    const deletingAttribute = ref<string | null>(null);
+    const deleteAttribute = async (id: string, productId: string) => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error(
+          `Failed to delete product attribute: ${id}`,
+          "No auth token found"
+        );
+        throw {
+          message: "Authentication required. Please log in again.",
+          statusCode: 401,
+        } satisfies ApiError;
+      }
+
+      deletingAttribute.value = id;
+
+      try {
+        const response = await $fetch(
+          `${config.public.apiBase}/product-attributes/${id}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        deletingAttribute.value = null;
+        getProductAttributes(productId);
+      } catch (error) {
+        const fetchError = error as FetchError<any>;
+
+        const apiError: ApiError = {
+          message:
+            fetchError.data?.message ??
+            fetchError.message ??
+            "Something went wrong",
+          errors: fetchError.data?.errors,
+          statusCode: fetchError.status,
+        };
+
+        console.error(`Failed to delete product attribute: ${id}`, error);
+        throw apiError;
+      }
+    };
+
     return {
       productAttributes,
       getProductAttributes,
-      adding,
+      addingAttribute,
       createProductAttribute,
+      deletingAttribute,
+      deleteAttribute,
     };
   }
 );

@@ -79,6 +79,8 @@
                 class="border border-dashed border-accented py-0.5 px-2 text-right w-3"
               >
                 <UButton
+                  @click="handleDeleteAttributeClick(productAttribute.id)"
+                  :loading="deletingAttribute"
                   size="xs"
                   variant="ghost"
                   color="error"
@@ -112,6 +114,7 @@
 
 <script setup lang="ts">
 import type { FetchError } from "ofetch";
+import ConfirmationDialog from "~/components/dialogs/ConfirmationDialog.vue";
 import { useAttributeStore } from "~/store/attribute.store";
 import { useProductFormStore } from "~/store/productForm.store";
 import {
@@ -159,11 +162,49 @@ const isTypeColor = (): boolean => {
   return false;
 };
 
-const addingAttribute = computed(() => productFormAttributeStore.adding);
+const addingAttribute = computed(
+  () => productFormAttributeStore.addingAttribute
+);
 const handleProductAttributeSubmit = async () => {
   try {
     await productFormAttributeStore.createProductAttribute(
       productAttributeForm
+    );
+  } catch (error) {
+    const fetchError = error as FetchError<any>;
+    toast.add({
+      title: "Error",
+      description:
+        fetchError.data?.message ??
+        fetchError.message ??
+        "Something went wrong",
+      icon: "i-lucide-octagon-x",
+      color: "error",
+    });
+  }
+};
+
+const overlay = useOverlay();
+const deleteModel = overlay.create(ConfirmationDialog);
+const handleDeleteAttributeClick = (id: string) => {
+  deleteModel.open({
+    title: "Delete Product Attribute",
+    message:
+      "Are you sure you want to delete this attribute from this product?",
+    onOk: () => {
+      deleteAttribute(id);
+    },
+  });
+};
+
+const deletingAttribute = computed(
+  () => productFormAttributeStore.deletingAttribute
+);
+const deleteAttribute = async (id: string) => {
+  try {
+    await productFormAttributeStore.deleteAttribute(
+      id,
+      productId.value as string
     );
   } catch (error) {
     const fetchError = error as FetchError<any>;
