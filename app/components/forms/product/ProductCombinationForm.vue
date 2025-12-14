@@ -77,14 +77,18 @@
 <script setup lang="ts">
 import { useAttributeStore } from "~/store/attribute.store";
 import { useProductFormStore } from "~/store/productForm.store";
+import { useProductFormAttributeStore } from "~/store/productFormAttribute.store";
 
 const productFormStore = useProductFormStore();
+const productFormAttributeStore = useProductFormAttributeStore();
 const attributeStore = useAttributeStore();
 
 const attributeItems = computed(() =>
   attributeStore.attributes.map((attr) => attr.attribute)
 );
-const productAttributes = computed(() => productFormStore.productAttributes);
+const productAttributes = computed(
+  () => productFormAttributeStore.productAttributes
+);
 
 attributeStore.getAttributes({ page: 1, per_page: 100 });
 </script>
