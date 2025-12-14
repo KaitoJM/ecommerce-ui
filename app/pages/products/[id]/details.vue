@@ -49,7 +49,7 @@
             <li class="border-b border-accented py-2 px-4 flex justify-between">
               Stock
               <UBadge variant="outline" color="neutral">{{
-                productFormStore.product.specification.stock
+                productFormStore.product?.specification?.stock
               }}</UBadge>
             </li>
             <li class="py-2 px-4 flex justify-between">
@@ -146,6 +146,7 @@
 <script setup lang="ts">
 import { useNavigationStore } from "~/store/navigation.store";
 import { useProductFormStore } from "~/store/productForm.store";
+import { useProductFormImageStore } from "~/store/productFormImage.store";
 
 definePageMeta({
   layout: "main-template",
@@ -154,10 +155,11 @@ definePageMeta({
 
 const navigationStore = useNavigationStore();
 const productFormStore = useProductFormStore();
+const productFormImageStore = useProductFormImageStore();
 const route = useRoute();
 
 const imageSources = computed<string[]>(() => {
-  const productImages = productFormStore.productImages ?? [];
+  const productImages = productFormImageStore.productImages ?? [];
 
   const cover =
     productFormStore.product?.thumbnail ??
@@ -172,7 +174,7 @@ const imageSources = computed<string[]>(() => {
 });
 
 await productFormStore.getProduct(route.params.id as string);
-await productFormStore.getProductImages(route.params.id as string);
+await productFormImageStore.getProductImages(route.params.id as string);
 
 onMounted(() => {
   navigationStore.setPageTitle("Product Information");

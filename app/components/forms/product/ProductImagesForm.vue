@@ -68,7 +68,7 @@
                   size="xs"
                   color="primary"
                   class="w-full flex justify-center"
-                  :loading="settingCover == image.id"
+                  :loading="productFormImageStore.settingCover == image.id"
                   @click="setCover(image.id)"
                 />
                 <UButton
@@ -76,7 +76,7 @@
                   size="xs"
                   color="error"
                   variant="ghost"
-                  :loading="deletingImage == image.id"
+                  :loading="productFormImageStore.deletingImage == image.id"
                   @click="handleDeleteImageClick(image.id)"
                 />
               </div>
@@ -92,15 +92,17 @@
 import type { FetchError } from "ofetch";
 import ConfirmationDialog from "~/components/dialogs/ConfirmationDialog.vue";
 import { useProductFormStore } from "~/store/productForm.store";
+import { useProductFormImageStore } from "~/store/productFormImage.store";
 import type { ApiError, ApiSuccess } from "~/types/ApiResponses.types";
 
 const productFormStore = useProductFormStore();
+const productFormImageStore = useProductFormImageStore();
 const toast = useToast();
 const file = ref<File[]>([]);
 
 const images = computed({
-  get: () => productFormStore.productImages,
-  set: (value) => (productFormStore.productImages = value),
+  get: () => productFormImageStore.productImages,
+  set: (value) => (productFormImageStore.productImages = value),
 });
 
 const productID = computed(() => productFormStore.product?.id);
@@ -116,92 +118,30 @@ const handleUpload = async () => {
 
   await Promise.all(
     file.value.map(async (f) => {
-      await upload(f);
-      uploadCount.value++;
+      try {
+        await productFormImageStore.uploadImage(productID.value as string, f);
+        uploadCount.value++;
+      } catch (error) {
+        const apiError = error as ApiError;
+        toast.add({
+          title: "Error",
+          description: apiError.message,
+          icon: "i-lucide-octagon-x",
+          color: "error",
+        });
+        console.error(error);
+      }
     })
   );
 
-  await productFormStore.getProductImages(productID.value as string);
+  await productFormImageStore.getProductImages(productID.value as string);
   file.value = [];
   uploading.value = false;
 };
 
-const config = useRuntimeConfig();
-const upload = async (file: File) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    console.error(
-      `Failed to upload product image: ${file.name}`,
-      "No auth token found"
-    );
-    throw {
-      message: "Authentication required. Please log in again.",
-      statusCode: 401,
-    } satisfies ApiError;
-  }
-
-  const formData = new FormData();
-  formData.append("image", file);
-  formData.append("product_id", productID.value!);
-  formData.append("cover", "0");
-
-  try {
-    const response = await $fetch(`${config.public.apiBase}/product-images`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
-      body: formData,
-    });
-  } catch (error) {
-    const fetchError = error as FetchError<any>;
-    toast.add({
-      title: "Error",
-      description:
-        fetchError.data?.message ??
-        fetchError.message ??
-        "Something went wrong",
-      icon: "i-lucide-octagon-x",
-      color: "error",
-    });
-
-    console.error(`Failed to upload product image: ${file.name}`, error);
-  }
-};
-
-const settingCover = ref<string | null>(null);
 const setCover = async (id: string) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    console.error(
-      `Failed to change product cover image: ${id}`,
-      "No auth token found"
-    );
-    throw {
-      message: "Authentication required. Please log in again.",
-      statusCode: 401,
-    } satisfies ApiError;
-  }
-
-  settingCover.value = id;
-
   try {
-    const response = await $fetch(
-      `${config.public.apiBase}/product-images-cover/${id}`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      }
-    );
-
-    settingCover.value = null;
-    productFormStore.getProductImages(productID.value as string);
+    productFormImageStore.setCover(id, productID.value as string);
   } catch (error) {
     const fetchError = error as FetchError<any>;
     toast.add({
@@ -213,9 +153,6 @@ const setCover = async (id: string) => {
       icon: "i-lucide-octagon-x",
       color: "error",
     });
-
-    settingCover.value = null;
-    console.error(`Failed to change product cover image: ${id}`, error);
   }
 };
 
@@ -231,37 +168,9 @@ const handleDeleteImageClick = (id: string) => {
   });
 };
 
-const deletingImage = ref<string | null>(null);
 const deleteImage = async (id: string) => {
-  const token = localStorage.getItem("token");
-
-  if (!token) {
-    console.error(
-      `Failed to delete product image: ${id}`,
-      "No auth token found"
-    );
-    throw {
-      message: "Authentication required. Please log in again.",
-      statusCode: 401,
-    } satisfies ApiError;
-  }
-
-  deletingImage.value = id;
-
   try {
-    const response = await $fetch(
-      `${config.public.apiBase}/product-images/${id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      }
-    );
-
-    deletingImage.value = null;
-    productFormStore.getProductImages(productID.value as string);
+    productFormImageStore.deleteImage(id, productID.value as string);
   } catch (error) {
     const fetchError = error as FetchError<any>;
     toast.add({
@@ -273,9 +182,6 @@ const deleteImage = async (id: string) => {
       icon: "i-lucide-octagon-x",
       color: "error",
     });
-
-    deletingImage.value = null;
-    console.error(`Failed to delete product image: ${id}`, error);
   }
 };
 </script>

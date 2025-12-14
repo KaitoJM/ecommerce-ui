@@ -25,31 +25,33 @@
           title="No selected attributes yet"
           description="You did not set any attribute for this product yet. it is requried that you set one or more attribute before we can generate a combinations for you."
         />
-        <table v-else class="border border-accented rounded-lg overflow-hidden">
-          <tr
-            v-for="(productAttribute, paIndex) in productAttributes"
-            :key="`product-attribute-item-${paIndex}-${productAttribute.id}`"
-          >
-            <td class="border border-dashed border-accented py-0.5 px-2">
-              <span class="opacity-70 text-sm">{{
-                productAttribute.attribute?.attribute
-              }}</span>
-            </td>
-            <td class="border border-dashed border-accented py-0.5 px-2">
-              {{ productAttribute.value }}
-            </td>
-            <td
-              class="border border-dashed border-accented py-0.5 px-2 text-right w-3"
+        <div v-else class="border border-accented rounded-lg overflow-hidden">
+          <table class="w-full">
+            <tr
+              v-for="(productAttribute, paIndex) in productAttributes"
+              :key="`product-attribute-item-${paIndex}-${productAttribute.id}`"
             >
-              <UButton
-                size="xs"
-                variant="ghost"
-                color="error"
-                icon="i-lucide-x"
-              />
-            </td>
-          </tr>
-        </table>
+              <td class="border border-dashed border-accented py-0.5 px-2">
+                <span class="opacity-70 text-sm">{{
+                  productAttribute.attribute?.attribute
+                }}</span>
+              </td>
+              <td class="border border-dashed border-accented py-0.5 px-2">
+                {{ productAttribute.value }}
+              </td>
+              <td
+                class="border border-dashed border-accented py-0.5 px-2 text-right w-3"
+              >
+                <UButton
+                  size="xs"
+                  variant="ghost"
+                  color="error"
+                  icon="i-lucide-x"
+                />
+              </td>
+            </tr>
+          </table>
+        </div>
         <UButton
           label="Generate Combinations"
           variant="outline"

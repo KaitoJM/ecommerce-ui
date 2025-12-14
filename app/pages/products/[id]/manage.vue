@@ -20,6 +20,7 @@ import ProductImagesFormVue from "~/components/forms/product/ProductImagesForm.v
 import ProductInformationFormVue from "~/components/forms/product/ProductInformationForm.vue";
 import { useNavigationStore } from "~/store/navigation.store";
 import { useProductFormStore } from "~/store/productForm.store";
+import { useProductFormImageStore } from "~/store/productFormImage.store";
 
 definePageMeta({
   layout: "main-template",
@@ -28,6 +29,7 @@ definePageMeta({
 
 const navigationStore = useNavigationStore();
 const productFormStore = useProductFormStore();
+const productFormImageStore = useProductFormImageStore();
 const route = useRoute();
 
 const tabItems = [
@@ -46,7 +48,7 @@ const tabItems = [
 ];
 
 await productFormStore.getProduct(route.params.id as string);
-await productFormStore.getProductImages(route.params.id as string);
+await productFormImageStore.getProductImages(route.params.id as string);
 await productFormStore.getProductAttributes(route.params.id as string);
 
 onMounted(() => {
