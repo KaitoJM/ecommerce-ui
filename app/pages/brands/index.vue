@@ -1,5 +1,5 @@
 <template>
-  <div>This is a test change</div>
+  <div>This is a test change 2</div>
 </template>
 
 <script setup lang="ts">
