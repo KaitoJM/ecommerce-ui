@@ -1,0 +1,42 @@
+name: Deploy Nuxt App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "24"
+
+      - name: Install PNPM Dependencies
+        run: |
+          npm install -g pnpm
+          pnpm install
+
+      - name: Build Nuxt
+        run: |
+          NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ec2-user
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            cd /home/ec2-user/ecommerce-ui
+            git pull origin main
+            pnpm install
+            NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+            pm2 restart nuxt || pm2 start .output/server/index.mjs --name nuxt
