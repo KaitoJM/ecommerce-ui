@@ -1,9 +1,14 @@
 import type { Attribute } from "./Attribute.types";
 import type { Category } from "./Category.types";
 
-interface ProductSpecification {
+export interface Combination {
+  product_attribute_id: string;
+  attribute_id: string;
+  value: string;
+}
+export interface ProductSpecification {
   id: string;
-  combination: string;
+  combination?: Combination[];
   product_id: string;
   price: number;
   stock: number;

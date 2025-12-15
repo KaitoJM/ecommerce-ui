@@ -80,7 +80,7 @@
               >
                 <UButton
                   @click="handleDeleteAttributeClick(productAttribute.id)"
-                  :loading="deletingAttribute"
+                  :loading="deletingAttribute == productAttribute.id"
                   size="xs"
                   variant="ghost"
                   color="error"
@@ -91,6 +91,7 @@
           </table>
         </div>
         <UButton
+          @click="handleGenerateCombinationClick"
           label="Generate Combinations"
           variant="outline"
           color="neutral"
@@ -101,12 +102,54 @@
         class="flex-1 flex flex-col gap-4 flex-wrap border border-dashed border-accented p-4 rounded-lg min-h-125"
       >
         <UEmpty
+          v-if="!productSpecifications.length"
           variant="naked"
           class="my-auto"
           icon="i-lucide-file"
           title="No combinations found"
           description="It looks like you haven't generated any combinations yet."
         />
+        <div v-else>
+          <table
+            class="w-full [&_th,&_td]:px-4 [&_th,&_td]:py-2 [&_th,&_td]:border-b [&_th,&_td]:border-accented [&_td:not(:last-child)]:border-r"
+          >
+            <thead>
+              <tr class="[&_th]:text-xs [&_th]:uppercase">
+                <th>Default</th>
+                <th class="text-left">Combinations</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="specification in productSpecifications">
+                <td>
+                  <UCheckbox />
+                </td>
+                <td>
+                  {{
+                    specification?.combination
+                      ?.map((item: Combination) => item.value)
+                      .join(" | ")
+                  }}
+                </td>
+                <td>
+                  <UInput placeholder="0.00" v-model="specification.price" />
+                </td>
+                <td>
+                  <UInputNumber placeholder="0" v-model="specification.stock" />
+                </td>
+                <td>
+                  <UButton icon="i-lucide-trash" variant="soft" color="error" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="mt-4 flex justify-end">
+            <UButton label="Save" icon="i-lucide-save" size="xl" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -121,7 +164,11 @@ import {
   useProductFormAttributeStore,
   type ProductAttributeForm,
 } from "~/store/productFormAttribute.store";
-import type { ProductAttribute } from "~/types/Product.types";
+import type {
+  Combination,
+  ProductAttribute,
+  ProductSpecification,
+} from "~/types/Product.types";
 
 const productFormStore = useProductFormStore();
 const productFormAttributeStore = useProductFormAttributeStore();
@@ -129,6 +176,7 @@ const attributeStore = useAttributeStore();
 const toast = useToast();
 
 const productId = computed(() => productFormStore.product?.id);
+const product = computed(() => productFormStore.product);
 const attributeItems = computed(() =>
   attributeStore.attributes.map((attr) => {
     return {
@@ -218,5 +266,86 @@ const deleteAttribute = async (id: string) => {
       color: "error",
     });
   }
+};
+
+const groupByAttribute = (items: ProductAttribute[]) => {
+  return Object.values(
+    items.reduce((acc: any, item) => {
+      const key = item.attribute_id;
+
+      if (!acc[key]) {
+        acc[key] = {
+          attribute_id: item.attribute_id,
+          values: [],
+        };
+      }
+
+      acc[key].values.push({
+        product_attribute_id: item.id,
+        value: item.value,
+      });
+
+      return acc;
+    }, {})
+  );
+};
+
+const cartesian = (groups: any[]) => {
+  return groups.reduce((acc: any[], group: any) => {
+    if (!acc.length) {
+      return group.values.map((v: any) => [
+        {
+          product_attribute_id: v.product_attribute_id,
+          attribute_id: group.attribute_id,
+          value: v.value,
+        },
+      ]);
+    }
+
+    return acc.flatMap((combo) =>
+      group.values.map((v: any) => [
+        ...combo,
+        {
+          product_attribute_id: v.product_attribute_id,
+          attribute_id: group.attribute_id,
+          value: v.value,
+        },
+      ])
+    );
+  }, []);
+};
+
+const productSpecifications = ref<ProductSpecification[]>([]);
+const generatedCombinations = ref<[Combination[]]>([[]]);
+const handleGenerateCombinationClick = () => {
+  if (!productAttributes.value.length) {
+    toast.add({
+      title: "No attributes",
+      description: "Please add at least one attribute first.",
+      color: "warning",
+    });
+    return;
+  }
+
+  // remove all values from product specifications
+  productSpecifications.value = [];
+
+  const grouped = groupByAttribute(productAttributes.value);
+  generatedCombinations.value = cartesian(grouped);
+
+  generatedCombinations.value.forEach((combinations) => {
+    productSpecifications.value.push({
+      id: "",
+      combination: combinations,
+      product_id: productId.value as string,
+      price: product.value?.specification?.price ?? 0,
+      stock: product.value?.specification?.stock ?? 0,
+      default: false,
+      sale: false,
+      created_at: "",
+    });
+  });
+
+  const formatCombinationToText = (combination: Combination[]) => {};
 };
 </script>
