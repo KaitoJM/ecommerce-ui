@@ -20,7 +20,7 @@ interface ProductSpecificationRaw {
   product_id: string;
   price: number;
   stock: number;
-  default: boolean;
+  default: string;
   sale: boolean;
   sale_price?: number;
   created_at: string;
@@ -65,6 +65,7 @@ export const useProductSpecificationStore = defineStore(
         productSpecifications.value = response.data.map((item) => ({
           ...item,
           combination: JSON.parse(item.combination),
+          default: item.default == "1" ? true : false,
         }));
         return productSpecifications.value;
       } catch (error) {
@@ -190,6 +191,53 @@ export const useProductSpecificationStore = defineStore(
       }
     };
 
+    const deleteProductSpecificationByProduct = async (productId: string) => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        console.error(
+          `Failed to delete product specification by product: ${productId}`,
+          "No auth token found"
+        );
+        throw {
+          message: "Authentication required. Please log in again.",
+          statusCode: 401,
+        } satisfies ApiError;
+      }
+
+      try {
+        const response = await $fetch(
+          `${config.public.apiBase}/product-specifications-delete-by-product/${productId}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        getProductSpecifications(productId);
+      } catch (error) {
+        const fetchError = error as FetchError<any>;
+
+        const apiError: ApiError = {
+          message:
+            fetchError.data?.message ??
+            fetchError.message ??
+            "Something went wrong",
+          errors: fetchError.data?.errors,
+          statusCode: fetchError.status,
+        };
+
+        console.error(
+          `Failed to delete product specification by product: ${productId}`,
+          error
+        );
+        throw apiError;
+      }
+    };
+
     return {
       productSpecifications,
       getProductSpecifications,
@@ -198,6 +246,7 @@ export const useProductSpecificationStore = defineStore(
       addProductSpecification,
       deletingProductSpecification,
       deleteProductSpecification,
+      deleteProductSpecificationByProduct,
     };
   }
 );

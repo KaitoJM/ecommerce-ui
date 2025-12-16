@@ -390,7 +390,53 @@ const handleRemoveSpecificationClick = (key: number) => {
   productSpecifications.value.splice(key, 1);
 };
 
-const handleSaveCombinationsClick = () => {};
+const createCount = ref(0);
+const savingCombinations = ref(false);
+const handleSaveCombinationsClick = async () => {
+  savingCombinations.value = true;
 
-const createProductCombination = (params: ProductSpecificationForm) => {};
+  // delete all specifications of the product
+  try {
+    await productSpecificationStore.deleteProductSpecificationByProduct(
+      productId.value as string
+    );
+  } catch (error) {
+    const fetchError = error as FetchError<any>;
+    toast.add({
+      title: "Error",
+      description:
+        fetchError.data?.message ??
+        fetchError.message ??
+        "Something went wrong",
+      icon: "i-lucide-octagon-x",
+      color: "error",
+    });
+  }
+
+  createCount.value = 0;
+
+  // create new specifications
+  await Promise.all(
+    productSpecifications.value.map(async (productSpecification) => {
+      const params: ProductSpecificationForm = {
+        combination: JSON.stringify(productSpecification.combination),
+        product_id: productSpecification.product_id,
+        price: productSpecification.price,
+        stock: productSpecification.stock,
+        default: productSpecification.default,
+        sale: productSpecification.sale,
+        sale_price: productSpecification.sale_price,
+      };
+
+      await createProductCombination(params);
+      createCount.value++;
+    })
+  );
+
+  productSpecificationStore.getProductSpecifications(productId.value as string);
+};
+
+const createProductCombination = async (params: ProductSpecificationForm) => {
+  productSpecificationStore.addProductSpecification(params);
+};
 </script>
