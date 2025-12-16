@@ -4,13 +4,35 @@ import type { Combination, ProductSpecification } from "~/types/Product.types";
 
 const config = useRuntimeConfig();
 
+export interface ProductSpecificationForm {
+  combination: string;
+  product_id: string;
+  price: number;
+  stock: number;
+  default: boolean;
+  sale?: boolean;
+  sale_price?: number;
+}
+
+interface ProductSpecificationRaw {
+  id: string;
+  combination: string;
+  product_id: string;
+  price: number;
+  stock: number;
+  default: boolean;
+  sale: boolean;
+  sale_price?: number;
+  created_at: string;
+}
+
 export const useProductSpecificationStore = defineStore(
   "productSpecificationStore",
   () => {
     const productSpecifications = ref<ProductSpecification[]>([]);
 
     const getProductSpecifications = async (
-      id: string
+      producy_id: string
     ): Promise<ProductSpecification[]> => {
       const token = localStorage.getItem("token");
 
@@ -26,7 +48,7 @@ export const useProductSpecificationStore = defineStore(
       }
 
       try {
-        const response: ApiSuccess<ProductSpecification[]> = await $fetch(
+        const response: ApiSuccess<ProductSpecificationRaw[]> = await $fetch(
           `${config.public.apiBase}/product-specifications`,
           {
             method: "GET",
@@ -35,13 +57,16 @@ export const useProductSpecificationStore = defineStore(
               Accept: "application/json",
             },
             query: {
-              product_id: id,
+              product_id: producy_id,
             },
           }
         );
 
-        productSpecifications.value = response.data;
-        return response.data;
+        productSpecifications.value = response.data.map((item) => ({
+          ...item,
+          combination: JSON.parse(item.combination),
+        }));
+        return productSpecifications.value;
       } catch (error) {
         const fetchError = error as FetchError<any>;
 
@@ -59,7 +84,19 @@ export const useProductSpecificationStore = defineStore(
       }
     };
 
-    const addProductSpecification = async (params: Combination) => {
+    const clearProductSpecification = () => {
+      productSpecifications.value = [];
+    };
+
+    const setNewProductSpecificationsSet = (
+      specifications: ProductSpecification[]
+    ) => {
+      productSpecifications.value = specifications;
+    };
+
+    const addProductSpecification = async (
+      params: ProductSpecificationForm
+    ) => {
       const token = localStorage.getItem("token");
 
       if (!token) {
@@ -75,17 +112,14 @@ export const useProductSpecificationStore = defineStore(
 
       try {
         const response = await $fetch(
-          `${config.public.apiBase}/product-images`,
+          `${config.public.apiBase}/product-specifications`,
           {
             method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
               Accept: "application/json",
             },
-            body: {
-              product_id: params.product_id,
-              attributes: JSON.stringify(params.attributes),
-            },
+            body: params,
           }
         );
       } catch (error) {
@@ -159,6 +193,8 @@ export const useProductSpecificationStore = defineStore(
     return {
       productSpecifications,
       getProductSpecifications,
+      clearProductSpecification,
+      setNewProductSpecificationsSet,
       addProductSpecification,
       deletingProductSpecification,
       deleteProductSpecification,

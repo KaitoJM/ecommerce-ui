@@ -167,7 +167,12 @@
             </tbody>
           </table>
           <div class="mt-4 flex justify-end">
-            <UButton label="Save" icon="i-lucide-save" size="xl" />
+            <UButton
+              @click="handleSaveCombinationsClick"
+              label="Save"
+              icon="i-lucide-save"
+              size="xl"
+            />
           </div>
         </div>
       </div>
@@ -184,6 +189,10 @@ import {
   useProductFormAttributeStore,
   type ProductAttributeForm,
 } from "~/store/productFormAttribute.store";
+import {
+  useProductSpecificationStore,
+  type ProductSpecificationForm,
+} from "~/store/productSpecification.tstore";
 import type {
   Combination,
   ProductAttribute,
@@ -192,6 +201,7 @@ import type {
 
 const productFormStore = useProductFormStore();
 const productFormAttributeStore = useProductFormAttributeStore();
+const productSpecificationStore = useProductSpecificationStore();
 const attributeStore = useAttributeStore();
 const toast = useToast();
 
@@ -209,6 +219,9 @@ const productAttributes = computed(
   () => productFormAttributeStore.productAttributes
 );
 attributeStore.getAttributes({ page: 1, per_page: 100 });
+let productSpecifications = computed(
+  () => productSpecificationStore.productSpecifications
+);
 
 const productAttributeForm: ProductAttributeForm = reactive({
   product_id: productId.value as string,
@@ -315,7 +328,6 @@ const cartesian = (groups: any[]) => {
     if (!acc.length) {
       return group.values.map((v: any) => [
         {
-          product_attribute_id: v.product_attribute_id,
           attribute_id: group.attribute_id,
           value: v.value,
         },
@@ -326,7 +338,6 @@ const cartesian = (groups: any[]) => {
       group.values.map((v: any) => [
         ...combo,
         {
-          product_attribute_id: v.product_attribute_id,
           attribute_id: group.attribute_id,
           value: v.value,
         },
@@ -335,7 +346,6 @@ const cartesian = (groups: any[]) => {
   }, []);
 };
 
-const productSpecifications = ref<ProductSpecification[]>([]);
 const generatedCombinations = ref<[Combination[]]>([[]]);
 const handleGenerateCombinationClick = () => {
   if (!productAttributes.value.length) {
@@ -348,7 +358,7 @@ const handleGenerateCombinationClick = () => {
   }
 
   // remove all values from product specifications
-  productSpecifications.value = [];
+  productSpecificationStore.clearProductSpecification();
 
   const grouped = groupByAttribute(productAttributes.value);
   generatedCombinations.value = cartesian(grouped);
@@ -365,21 +375,22 @@ const handleGenerateCombinationClick = () => {
       created_at: "",
     });
   });
-
-  const formatCombinationToText = (combination: Combination[]) => {};
 };
 
 const handleDefautCheckClick = (key: number) => {
-  productSpecifications.value = productSpecifications.value.map((item) => ({
-    ...item,
-    default: false,
-  }));
-  if (productSpecifications.value?.length && productSpecifications.value[key]) {
-    productSpecifications.value[key].default = true;
-  }
+  productSpecificationStore.setNewProductSpecificationsSet(
+    productSpecifications.value.map((item, itemKey) => ({
+      ...item,
+      default: itemKey == key,
+    }))
+  );
 };
 
 const handleRemoveSpecificationClick = (key: number) => {
   productSpecifications.value.splice(key, 1);
 };
+
+const handleSaveCombinationsClick = () => {};
+
+const createProductCombination = (params: ProductSpecificationForm) => {};
 </script>

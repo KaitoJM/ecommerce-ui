@@ -22,6 +22,7 @@ import { useNavigationStore } from "~/store/navigation.store";
 import { useProductFormStore } from "~/store/productForm.store";
 import { useProductFormAttributeStore } from "~/store/productFormAttribute.store";
 import { useProductFormImageStore } from "~/store/productFormImage.store";
+import { useProductSpecificationStore } from "~/store/productSpecification.tstore";
 
 definePageMeta({
   layout: "main-template",
@@ -32,6 +33,7 @@ const navigationStore = useNavigationStore();
 const productFormStore = useProductFormStore();
 const productFormImageStore = useProductFormImageStore();
 const productFormAttributeStore = useProductFormAttributeStore();
+const productSpecifications = useProductSpecificationStore();
 const route = useRoute();
 
 const tabItems = [
@@ -52,6 +54,7 @@ const tabItems = [
 await productFormStore.getProduct(route.params.id as string);
 await productFormImageStore.getProductImages(route.params.id as string);
 await productFormAttributeStore.getProductAttributes(route.params.id as string);
+await productSpecifications.getProductSpecifications(route.params.id as string);
 
 onMounted(() => {
   navigationStore.setPageTitle("Manage Product");
