@@ -1,5 +1,6 @@
 <template>
   <UApp toaster>
+    <NuxtLoadingIndicator />
     <NuxtLayout>
       <NuxtPage />
     </NuxtLayout>
