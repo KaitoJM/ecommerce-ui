@@ -97,6 +97,13 @@
           color="neutral"
           class="flex justify-center"
         />
+        <UAlert
+          title="Heads up!"
+          description="Generating a combination will entirely remove your old combinations and replaces it with new ones. Be sure to enter again the specific data for each combinations before saving."
+          icon="i-lucide-circle-alert"
+          variant="subtle"
+          color="neutral"
+        />
       </div>
       <div
         class="flex-1 flex flex-col gap-4 flex-wrap border border-dashed border-accented p-4 rounded-lg min-h-125"
