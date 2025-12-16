@@ -123,9 +123,17 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="specification in productSpecifications">
+              <tr
+                v-for="(
+                  specification, specificationIndex
+                ) in productSpecifications"
+                :key="`specific-row-${specificationIndex}-${specification.id}`"
+              >
                 <td>
-                  <UCheckbox />
+                  <UCheckbox
+                    v-model="specification.default"
+                    @click="handleDefautCheckClick(specificationIndex)"
+                  />
                 </td>
                 <td>
                   {{
@@ -333,19 +341,29 @@ const handleGenerateCombinationClick = () => {
   const grouped = groupByAttribute(productAttributes.value);
   generatedCombinations.value = cartesian(grouped);
 
-  generatedCombinations.value.forEach((combinations) => {
+  generatedCombinations.value.forEach((combinations, combKey) => {
     productSpecifications.value.push({
       id: "",
       combination: combinations,
       product_id: productId.value as string,
       price: product.value?.specification?.price ?? 0,
       stock: product.value?.specification?.stock ?? 0,
-      default: false,
+      default: combKey == 0 ? true : false,
       sale: false,
       created_at: "",
     });
   });
 
   const formatCombinationToText = (combination: Combination[]) => {};
+};
+
+const handleDefautCheckClick = (key: number) => {
+  productSpecifications.value = productSpecifications.value.map((item) => ({
+    ...item,
+    default: false,
+  }));
+  if (productSpecifications.value?.length && productSpecifications.value[key]) {
+    productSpecifications.value[key].default = true;
+  }
 };
 </script>
