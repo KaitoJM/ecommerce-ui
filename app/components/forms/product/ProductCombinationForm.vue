@@ -276,7 +276,8 @@ const handleDeleteAttributeClick = (id: string) => {
   deleteModel.open({
     title: "Delete Product Attribute",
     message:
-      "Are you sure you want to delete this attribute from this product? \n Proceeding from this action will delete this entry directly.",
+      "Are you sure you want to delete this attribute from this product?",
+    submessage: "You cannot undo this action after.",
     onOk: () => {
       deleteAttribute(id);
     },
