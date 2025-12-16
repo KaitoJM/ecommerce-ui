@@ -149,7 +149,12 @@
                   <UInputNumber placeholder="0" v-model="specification.stock" />
                 </td>
                 <td>
-                  <UButton icon="i-lucide-trash" variant="soft" color="error" />
+                  <UButton
+                    @click="handleRemoveSpecificationClick(specificationIndex)"
+                    icon="i-lucide-trash"
+                    variant="soft"
+                    color="error"
+                  />
                 </td>
               </tr>
             </tbody>
@@ -365,5 +370,9 @@ const handleDefautCheckClick = (key: number) => {
   if (productSpecifications.value?.length && productSpecifications.value[key]) {
     productSpecifications.value[key].default = true;
   }
+};
+
+const handleRemoveSpecificationClick = (key: number) => {
+  productSpecifications.value.splice(key, 1);
 };
 </script>
