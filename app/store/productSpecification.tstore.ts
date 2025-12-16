@@ -216,8 +216,6 @@ export const useProductSpecificationStore = defineStore(
             },
           }
         );
-
-        getProductSpecifications(productId);
       } catch (error) {
         const fetchError = error as FetchError<any>;
 

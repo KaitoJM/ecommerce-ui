@@ -81,10 +81,10 @@
                 <UButton
                   @click="handleDeleteAttributeClick(productAttribute.id)"
                   :loading="deletingAttribute == productAttribute.id"
-                  size="xs"
-                  variant="ghost"
+                  size="sm"
+                  variant="soft"
                   color="error"
-                  icon="i-lucide-x"
+                  icon="i-lucide-trash"
                 />
               </td>
             </tr>
@@ -156,18 +156,23 @@
                   <UInputNumber placeholder="0" v-model="specification.stock" />
                 </td>
                 <td>
-                  <UButton
-                    @click="handleRemoveSpecificationClick(specificationIndex)"
-                    icon="i-lucide-trash"
-                    variant="soft"
-                    color="error"
-                  />
+                  <div class="flex justify-end">
+                    <UButton
+                      @click="
+                        handleRemoveSpecificationClick(specificationIndex)
+                      "
+                      icon="i-lucide-x"
+                      variant="soft"
+                      color="error"
+                    />
+                  </div>
                 </td>
               </tr>
             </tbody>
           </table>
           <div class="mt-4 flex justify-end">
             <UButton
+              :loading="savingCombinations"
               @click="handleSaveCombinationsClick"
               label="Save"
               icon="i-lucide-save"
@@ -271,7 +276,7 @@ const handleDeleteAttributeClick = (id: string) => {
   deleteModel.open({
     title: "Delete Product Attribute",
     message:
-      "Are you sure you want to delete this attribute from this product?",
+      "Are you sure you want to delete this attribute from this product? \n Proceeding from this action will delete this entry directly.",
     onOk: () => {
       deleteAttribute(id);
     },
@@ -416,27 +421,28 @@ const handleSaveCombinationsClick = async () => {
   createCount.value = 0;
 
   // create new specifications
-  await Promise.all(
-    productSpecifications.value.map(async (productSpecification) => {
-      const params: ProductSpecificationForm = {
-        combination: JSON.stringify(productSpecification.combination),
-        product_id: productSpecification.product_id,
-        price: productSpecification.price,
-        stock: productSpecification.stock,
-        default: productSpecification.default,
-        sale: productSpecification.sale,
-        sale_price: productSpecification.sale_price,
-      };
+  for (const productSpecification of productSpecifications.value) {
+    const params: ProductSpecificationForm = {
+      combination: JSON.stringify(productSpecification.combination),
+      product_id: productSpecification.product_id,
+      price: productSpecification.price,
+      stock: productSpecification.stock,
+      default: productSpecification.default,
+      sale: productSpecification.sale,
+      sale_price: productSpecification.sale_price,
+    };
 
-      await createProductCombination(params);
-      createCount.value++;
-    })
-  );
+    await productSpecificationStore.addProductSpecification(params);
+    createCount.value++;
+  }
 
   productSpecificationStore.getProductSpecifications(productId.value as string);
-};
-
-const createProductCombination = async (params: ProductSpecificationForm) => {
-  productSpecificationStore.addProductSpecification(params);
+  savingCombinations.value = false;
+  toast.add({
+    title: "Success",
+    description: "New combinations has been saved.",
+    icon: "i-lucide-check",
+    color: "success",
+  });
 };
 </script>
