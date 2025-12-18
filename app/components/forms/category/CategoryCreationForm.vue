@@ -35,6 +35,9 @@ import type { ApiError } from "~/types/ApiResponses.types";
 const categoryStore = useCategoryStore();
 const toast = useToast();
 
+// emits
+const emit = defineEmits<{ done: [boolean] }>();
+
 // form fields declarations
 const name = ref<string>("");
 const description = ref<string>("");
@@ -56,6 +59,7 @@ const handleCreate = async () => {
     });
 
     clearForm();
+    emit("done", true);
   } catch (error: unknown) {
     const apiError = error as ApiError;
     toast.add({

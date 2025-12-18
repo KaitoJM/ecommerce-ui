@@ -22,12 +22,17 @@
         />
       </template>
       <template #headerAction>
-        <UModal>
-          <UButton variant="outline" color="primary" icon="i-lucide-plus">
+        <UModal v-model:open="showAddCategoryModal">
+          <UButton
+            variant="outline"
+            color="primary"
+            icon="i-lucide-plus"
+            @click="showAddCategoryModal = true"
+          >
             Add Category
           </UButton>
           <template #content>
-            <CategoryCreationForm />
+            <CategoryCreationForm @done="showAddCategoryModal = false" />
           </template>
         </UModal>
       </template>
@@ -56,6 +61,8 @@ definePageMeta({
 
 const categoryStore = useCategoryStore();
 const router = useRouter();
+
+const showAddCategoryModal = ref<boolean>(false);
 
 const routeQueryPage = computed<number>(() => {
   if (router.currentRoute.value.query?.page) {
