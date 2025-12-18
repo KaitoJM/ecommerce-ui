@@ -1,5 +1,9 @@
 <template>
   <div class="flex flex-col gap-2">
+    <div class="flex items-center gap-4">
+      <TotalCategories />
+      <TotalUnusedCategories />
+    </div>
     <RecordListVue
       class="mt-4"
       :data="categoryStore.categoryList"
@@ -53,6 +57,8 @@ import { useCategoryStore } from "~/store/category.store";
 import CategoryCreationForm from "~/components/forms/category/CategoryCreationForm.vue";
 import type { ApiError } from "~/types/ApiResponses.types";
 import ConfirmationDialog from "~/components/dialogs/ConfirmationDialog.vue";
+import TotalCategories from "~/components/dashboard/TotalCategories.vue";
+import TotalUnusedCategories from "~/components/dashboard/TotalUnusedCategories.vue";
 
 definePageMeta({
   layout: "main-template",
