@@ -62,8 +62,6 @@ definePageMeta({
 });
 
 const productStore = useProductStore();
-const UCheckbox = resolveComponent("UCheckbox");
-const UBadge = resolveComponent("UBadge");
 const router = useRouter();
 
 const routeQueryPage = computed<number>(() => {
@@ -84,11 +82,24 @@ const handleSearchKeyup = useDebounceFn(() => {
   productStore.getProducts({ page: routeQueryPage.value }, searchKeyword.value);
 }, 400);
 
-// table columns
+const UBadge = resolveComponent("UBadge");
+const UCheckbox = resolveComponent("UCheckbox");
+const UFieldGroup = resolveComponent("UFieldGroup");
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+
 const columns: TableColumn<ProductListItem>[] = [
   {
     id: "select",
-    header: ({ table }) =>
+    header: ({
+      table,
+    }: {
+      table: {
+        getIsSomePageRowsSelected: any;
+        getIsAllPageRowsSelected: any;
+        toggleAllPageRowsSelected: any;
+      };
+    }) =>
       h(UCheckbox, {
         modelValue: table.getIsSomePageRowsSelected()
           ? "indeterminate"
