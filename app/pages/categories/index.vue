@@ -46,6 +46,8 @@ import type { TableRow } from "@nuxt/ui";
 import { useDebounceFn } from "@vueuse/core";
 import { useCategoryStore } from "~/store/category.store";
 import CategoryCreationForm from "~/components/forms/category/CategoryCreationForm.vue";
+import type { ApiError } from "~/types/ApiResponses.types";
+import ConfirmationDialog from "~/components/dialogs/ConfirmationDialog.vue";
 
 definePageMeta({
   layout: "main-template",
@@ -191,6 +193,10 @@ const columns: TableColumn<CategoryListItem>[] = [
   },
 ];
 
+const toast = useToast();
+const overlay = useOverlay();
+const deleteCategoryModal = overlay.create(ConfirmationDialog);
+
 const handleViewDetails = (categoryId: string) => {
   console.log("View details for category ID:", categoryId);
 };
@@ -206,10 +212,37 @@ const handleDuplicateCategory = (categoryId: string) => {
 
 const handleDeleteCategory = (categoryId: string) => {
   console.log("Delete categories ID:", categoryId);
+  deleteCategoryModal.open({
+    title: "Delete Category",
+    message: "Are you sure you want to delete this category?",
+    onOk: () => {
+      deleteCategory(categoryId);
+    },
+  });
 };
 
 const handlePageUpdate = (page: number) => {
   categoryStore.getCategories({ page: page });
+};
+
+const deleteCategory = async (id: string) => {
+  try {
+    await categoryStore.deleteCategory(id);
+    toast.add({
+      title: "Deleted",
+      description: "Items has bees successfully deleted.",
+      color: "success",
+      icon: "i-lucide-check",
+    });
+  } catch (error: unknown) {
+    const apiError = error as ApiError;
+    toast.add({
+      title: "Error",
+      description: apiError.message,
+      icon: "i-lucide-octagon-x",
+      color: "error",
+    });
+  }
 };
 
 const handleDeleteCategoryMultiple = (ids: string[]) => {

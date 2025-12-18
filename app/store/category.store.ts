@@ -129,8 +129,9 @@ export const useCategoryStore = defineStore("categoryStore", () => {
         }
       );
 
+      categories.value.push(response.data);
       // refresh category list
-      getCategories();
+      // getCategories();
     } catch (error) {
       const fetchError = error as FetchError<any>;
 
