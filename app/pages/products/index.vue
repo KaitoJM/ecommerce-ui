@@ -3,7 +3,6 @@
     <div class="flex items-center gap-4">
       <TotalProductsVue />
       <TotalPublishedProductsVue />
-      <NewProductsAdded30daysVue />
       <OutOfStockProductsVue />
     </div>
     <RecordListVue
