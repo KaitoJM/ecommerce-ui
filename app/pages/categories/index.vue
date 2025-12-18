@@ -55,7 +55,6 @@ definePageMeta({
 });
 
 const categoryStore = useCategoryStore();
-const UCheckbox = resolveComponent("UCheckbox");
 const router = useRouter();
 
 const routeQueryPage = computed<number>(() => {
@@ -79,11 +78,23 @@ const handleSearchKeyup = useDebounceFn(() => {
   );
 }, 400);
 
-// table columns
+const UCheckbox = resolveComponent("UCheckbox");
+const UFieldGroup = resolveComponent("UFieldGroup");
+const UButton = resolveComponent("UButton");
+const UDropdownMenu = resolveComponent("UDropdownMenu");
+
 const columns: TableColumn<CategoryListItem>[] = [
   {
     id: "select",
-    header: ({ table }) =>
+    header: ({
+      table,
+    }: {
+      table: {
+        getIsSomePageRowsSelected: any;
+        getIsAllPageRowsSelected: any;
+        toggleAllPageRowsSelected: any;
+      };
+    }) =>
       h(UCheckbox, {
         modelValue: table.getIsSomePageRowsSelected()
           ? "indeterminate"
