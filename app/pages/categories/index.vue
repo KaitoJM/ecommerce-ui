@@ -27,10 +27,7 @@
             Add Category
           </UButton>
           <template #content>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate,
-            culpa sed doloremque quisquam animi expedita architecto, magnam
-            molestiae officiis ratione sunt esse eum. Corrupti dolores
-            architecto quae atque, nulla commodi.
+            <CategoryCreationForm />
           </template>
         </UModal>
       </template>
@@ -48,6 +45,7 @@ import { onMounted, ref } from "vue";
 import type { TableRow } from "@nuxt/ui";
 import { useDebounceFn } from "@vueuse/core";
 import { useCategoryStore } from "~/store/category.store";
+import CategoryCreationForm from "~/components/forms/category/CategoryCreationForm.vue";
 
 definePageMeta({
   layout: "main-template",

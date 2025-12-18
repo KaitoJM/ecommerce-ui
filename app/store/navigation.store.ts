@@ -1,3 +1,4 @@
+import { defineStore } from "pinia";
 import type { Navigation } from "~/types/Navigation.types";
 
 export const useNavigationStore = defineStore("navigationStore", () => {

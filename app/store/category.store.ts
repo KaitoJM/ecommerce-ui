@@ -3,10 +3,18 @@ import type { FetchError } from "ofetch";
 import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
 import type { PaginationParams } from "~/types/Global.types";
 import type { Category } from "~/types/Category.types";
-import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
+import type {
+  ApiError,
+  ApiPaginated,
+  ApiSuccess,
+} from "~/types/ApiResponses.types";
+import { defineStore } from "pinia";
+
+export interface CategoryForm {
+  name: string;
+}
 
 const config = useRuntimeConfig();
-
 export const useCategoryStore = defineStore("categoryStore", () => {
   const pageMeta = ref<PageMeta>({
     current_page: 1,
@@ -55,7 +63,7 @@ export const useCategoryStore = defineStore("categoryStore", () => {
   ): Promise<ApiPaginated<Category>> => {
     fetching.value = true;
 
-    let pageQuery;
+    let pageQuery = "";
     if (paginationParams) {
       pageQuery = `?page=${paginationParams.page}`;
       if (paginationParams.per_page) {
@@ -92,6 +100,50 @@ export const useCategoryStore = defineStore("categoryStore", () => {
       };
 
       console.error(`Failed to fetch categories:`, error);
+      throw apiError;
+    }
+  };
+
+  const storeCategory = async (params: CategoryForm) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(`Failed to create new category`, "No auth token found");
+
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
+    try {
+      const response: ApiSuccess<Category> = await $fetch(
+        `${config.public.apiBase}/categories`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: params,
+        }
+      );
+
+      // refresh category list
+      getCategories();
+    } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(`Failed to create new category`, error);
       throw apiError;
     }
   };
@@ -148,6 +200,7 @@ export const useCategoryStore = defineStore("categoryStore", () => {
     pageMeta,
     links,
     getCategories,
+    storeCategory,
     deleteCategory,
   };
 });

@@ -1,4 +1,5 @@
 import type { FetchError } from "ofetch";
+import { defineStore } from "pinia";
 import type { ApiError, ApiSuccess } from "~/types/ApiResponses.types";
 import type { Category } from "~/types/Category.types";
 import type {

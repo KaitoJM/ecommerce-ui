@@ -1,5 +1,6 @@
 import { page } from "#build/ui";
 import type { FetchError } from "ofetch";
+import { defineStore } from "pinia";
 import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
 import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
 import type { PaginationParams } from "~/types/Global.types";
