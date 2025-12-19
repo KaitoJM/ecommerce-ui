@@ -2,7 +2,7 @@
   <div class="flex flex-col max-h-full">
     <h1 class="text-2xl font-bold mb-4">Change Logs</h1>
     <div class="flex-1 overflow-y-hidden p-4 rounded-lg">
-      <ul>
+      <ul class="flex flex-col gap-4">
         <li
           v-for="(release, releaseKey) in changeLogs"
           :key="`release-${releaseKey}`"
@@ -23,7 +23,9 @@
                 v-for="(commit, commitKey) in release.commits"
                 :key="`commit-${commitKey}`"
               >
-                <p class="text-xs">{{ formatDate(commit.date) }}</p>
+                <p class="text-xs text-primary">
+                  {{ formatDate(commit.date) }}
+                </p>
                 <p class="py-2 font-bold text-sm">{{ commit.message }}</p>
                 <div class="flex items-center gap-2">
                   <UAvatar :src="commit.avatar" class="size-4" />
