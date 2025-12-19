@@ -107,7 +107,7 @@ const logout = async () => {
     logingOut.value = false;
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    router.push("/");
+    router.push("/login");
   }
 };
 </script>

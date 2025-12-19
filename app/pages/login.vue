@@ -1,46 +1,53 @@
 <template>
-  <div class="flex flex-col items-center justify-center gap-4 p-4 h-screen">
-    <Logo class="w-60" />
-    <UPageCard class="w-full max-w-md">
-      <UForm class="flex flex-col gap-4" @submit.prevent="handleLogin">
-        <p class="font-bold text-lg">Welcome back!</p>
-        <UFormField label="Email">
-          <UInput
-            v-model="email"
-            placeholder="Enter your email"
-            class="w-full"
-          />
-        </UFormField>
-        <UFormField label="Password">
-          <UInput
-            v-model="password"
-            placeholder="Enter your password"
-            class="w-full"
-            :type="showPassword ? 'text' : 'password'"
-            :ui="{ trailing: 'pe-1' }"
+  <div class="flex items-center">
+    <div class="flex-1 h-screen p-8 bg-neutral-50 dark:bg-neutral-900">
+      <ChangeLogs />
+    </div>
+    <div
+      class="w-150 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4 p-8 h-screen"
+    >
+      <Logo class="w-60" />
+      <UPageCard class="w-full max-w-md">
+        <UForm class="flex flex-col gap-4" @submit.prevent="handleLogin">
+          <p class="font-bold text-lg">Welcome back!</p>
+          <UFormField label="Email">
+            <UInput
+              v-model="email"
+              placeholder="Enter your email"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField label="Password">
+            <UInput
+              v-model="password"
+              placeholder="Enter your password"
+              class="w-full"
+              :type="showPassword ? 'text' : 'password'"
+              :ui="{ trailing: 'pe-1' }"
+            >
+              <template #trailing>
+                <UButton
+                  color="neutral"
+                  variant="link"
+                  size="sm"
+                  :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
+                  :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                  :aria-pressed="showPassword"
+                  aria-controls="password"
+                  @click="showPassword = !showPassword"
+                />
+              </template>
+            </UInput>
+          </UFormField>
+          <UButton
+            :loading="loading"
+            type="submit"
+            class="mt-4 flex justify-center"
+            >Login</UButton
           >
-            <template #trailing>
-              <UButton
-                color="neutral"
-                variant="link"
-                size="sm"
-                :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
-                :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                :aria-pressed="showPassword"
-                aria-controls="password"
-                @click="showPassword = !showPassword"
-              />
-            </template>
-          </UInput>
-        </UFormField>
-        <UButton
-          :loading="loading"
-          type="submit"
-          class="mt-4 flex justify-center"
-          >Login</UButton
-        >
-      </UForm>
-    </UPageCard>
+        </UForm>
+      </UPageCard>
+    </div>
   </div>
 </template>
 
@@ -50,6 +57,7 @@ import Logo from "~/components/ui/Logo.vue";
 
 import { ref } from "vue";
 import type { User } from "~/types/User.types";
+import ChangeLogs from "~/components/ChangeLogs.vue";
 
 interface LoginResponse {
   user: User;
