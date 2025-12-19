@@ -22,15 +22,17 @@
         />
       </template>
       <template #headerAction>
-        <UModal>
-          <UButton variant="outline" color="primary" icon="i-lucide-plus">
+        <UModal v-model:open="showAddAttributeModal">
+          <UButton
+            variant="outline"
+            color="primary"
+            icon="i-lucide-plus"
+            @click="showAddAttributeModal = true"
+          >
             Add Attribute
           </UButton>
           <template #content>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptate,
-            culpa sed doloremque quisquam animi expedita architecto, magnam
-            molestiae officiis ratione sunt esse eum. Corrupti dolores
-            architecto quae atque, nulla commodi.
+            <AttributeCreationForm @done="showAddAttributeModal = false" />
           </template>
         </UModal>
       </template>
@@ -48,6 +50,7 @@ import type { TableRow } from "@nuxt/ui";
 import { useDebounceFn } from "@vueuse/core";
 import { useAttributeStore } from "~/store/attribute.store";
 import type { AttributeListItem } from "~/types/Attribute.types";
+import AttributeCreationForm from "~/components/forms/attribute/AttributeCreationForm.vue";
 
 definePageMeta({
   layout: "main-template",
@@ -56,6 +59,8 @@ definePageMeta({
 
 const attributeStore = useAttributeStore();
 const router = useRouter();
+
+const showAddAttributeModal = ref<boolean>(false);
 
 const routeQueryPage = computed<number>(() => {
   if (router.currentRoute.value.query?.page) {

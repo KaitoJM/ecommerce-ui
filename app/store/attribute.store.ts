@@ -1,10 +1,19 @@
 import type { FetchError } from "ofetch";
 import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
 import type { PaginationParams } from "~/types/Global.types";
-import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
-import type { Attribute } from "~/types/Attribute.types";
+import type {
+  ApiError,
+  ApiPaginated,
+  ApiSuccess,
+} from "~/types/ApiResponses.types";
+import type { Attribute, AttributeSelection } from "~/types/Attribute.types";
 
 const config = useRuntimeConfig();
+
+export interface AttributeForm {
+  attribute: string;
+  selection_type: AttributeSelection;
+}
 
 export const useAttributeStore = defineStore("attributeStore", () => {
   const pageMeta = ref<PageMeta>({
@@ -114,6 +123,49 @@ export const useAttributeStore = defineStore("attributeStore", () => {
     }
   };
 
+  const storeAttribute = async (params: AttributeForm) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(`Failed to create new attribute`, "No auth token found");
+
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
+    try {
+      const response: ApiSuccess<Attribute> = await $fetch(
+        `${config.public.apiBase}/attributes`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+          body: params,
+        }
+      );
+
+      attributes.value.push(response.data);
+    } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(`Failed to create new attribute`, error);
+      throw apiError;
+    }
+  };
+
   const deleteAttribute = async (attributeId: string) => {
     const token = localStorage.getItem("token");
 
@@ -168,6 +220,7 @@ export const useAttributeStore = defineStore("attributeStore", () => {
     pageMeta,
     links,
     getAttributes,
+    storeAttribute,
     deleteAttribute,
   };
 });
