@@ -1,7 +1,7 @@
 import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
 import type { FetchError } from "ofetch";
 
-export interface ChangeLog {
+export interface Commit {
   sha: string;
   message: string;
   author: string;
@@ -10,13 +10,21 @@ export interface ChangeLog {
   url: string;
 }
 
+export interface Release {
+  commits: Commit[];
+  date: string;
+  tag: string;
+  url: string;
+  version: string;
+}
+
 const config = useRuntimeConfig();
 export const useGithub = () => {
-  const changeLogs = ref<ChangeLog[]>([]);
+  const changeLogs = ref<Release[]>([]);
 
-  const getChangeLogs = async (): Promise<ApiPaginated<ChangeLog>> => {
+  const getChangeLogs = async (): Promise<ApiPaginated<Release>> => {
     try {
-      const res: ApiPaginated<ChangeLog> = await $fetch(
+      const res: ApiPaginated<Release> = await $fetch(
         `${config.public.apiBase}/change-logs`,
         {
           method: "GET",
