@@ -50,6 +50,7 @@ const handleCreate = async () => {
   try {
     await categoryStore.storeCategory({
       name: name.value,
+      description: description.value,
     });
 
     toast.add({
