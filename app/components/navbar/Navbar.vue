@@ -100,24 +100,14 @@ const logout = async () => {
         Accept: "application/json",
       },
     });
-
+  } catch (err) {
+    const fetchError = err as FetchError<any>;
+    console.log(fetchError.message);
+  } finally {
+    logingOut.value = false;
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     router.push("/");
-  } catch (err) {
-    const fetchError = err as FetchError<any>;
-
-    toast.add({
-      title: "Error",
-      description:
-        fetchError.data?.message ??
-        fetchError.message ??
-        "Something went wrong",
-      icon: "i-lucide-octagon-x",
-      color: "error",
-    });
-  } finally {
-    logingOut.value = false;
   }
 };
 </script>

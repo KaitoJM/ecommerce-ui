@@ -176,24 +176,36 @@ const columns: TableColumn<AttributeListItem>[] = [
       return h(
         "div",
         { class: "text-right" },
-        h(UFieldGroup, {}, [
-          h(
-            UButton,
-            {
-              color: "primary",
-              onClick: () => {
-                handleViewDetails(id);
-              },
-            },
-            () => "Details"
-          ),
-          h(UDropdownMenu, { items: items }, [
-            h(UButton, {
-              color: "primary",
-              icon: "i-lucide-chevron-down",
-            }),
-          ]),
-        ])
+        h(
+          UFieldGroup,
+          {},
+          {
+            default: () => [
+              h(
+                UButton,
+                {
+                  color: "primary",
+                  onClick: () => {
+                    handleViewDetails(id);
+                  },
+                },
+                () => "Details"
+              ),
+              h(
+                UDropdownMenu,
+                { items: items },
+                {
+                  default: () => [
+                    h(UButton, {
+                      color: "primary",
+                      icon: "i-lucide-chevron-down",
+                    }),
+                  ],
+                }
+              ),
+            ],
+          }
+        )
       );
     },
   },
