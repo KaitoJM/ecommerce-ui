@@ -2,8 +2,8 @@ name: Deploy Nuxt App
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - v**-production
 
 jobs:
   deploy:
