@@ -1,3 +1,3 @@
 <template>
-  <img src="~/assets/images/logo-placeholder.png" />
+  <img src="/juanlogo.png" class="dark:invert dark:brightness-200 opacity-80" />
 </template>
