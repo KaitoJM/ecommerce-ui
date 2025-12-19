@@ -51,6 +51,8 @@ import { useDebounceFn } from "@vueuse/core";
 import { useAttributeStore } from "~/store/attribute.store";
 import type { AttributeListItem } from "~/types/Attribute.types";
 import AttributeCreationForm from "~/components/forms/attribute/AttributeCreationForm.vue";
+import ConfirmationDialog from "~/components/dialogs/ConfirmationDialog.vue";
+import type { ApiError } from "~/types/ApiResponses.types";
 
 definePageMeta({
   layout: "main-template",
@@ -210,12 +212,42 @@ const handleDuplicateAttribute = (attributeId: string) => {
   console.log("Duplicate attributes ID:", attributeId);
 };
 
+const toast = useToast();
+const overlay = useOverlay();
+const deleteAttributeModal = overlay.create(ConfirmationDialog);
+
 const handleDeleteAttribute = (attributeId: string) => {
-  console.log("Delete attributes ID:", attributeId);
+  deleteAttributeModal.open({
+    title: "Delete Attribute",
+    message: "Are you sure you want to delete this attribute?",
+    onOk: () => {
+      deleteAttribute(attributeId);
+    },
+  });
 };
 
 const handlePageUpdate = (page: number) => {
   attributeStore.getAttributes({ page: page });
+};
+
+const deleteAttribute = async (id: string) => {
+  try {
+    await attributeStore.deleteAttribute(id);
+    toast.add({
+      title: "Deleted",
+      description: "Items has bees successfully deleted.",
+      color: "success",
+      icon: "i-lucide-check",
+    });
+  } catch (error: unknown) {
+    const apiError = error as ApiError;
+    toast.add({
+      title: "Error",
+      description: apiError.message,
+      icon: "i-lucide-octagon-x",
+      color: "error",
+    });
+  }
 };
 
 const handleDeleteAttributeMultiple = (ids: string[]) => {
