@@ -1,6 +1,9 @@
 <template>
   <div class="flex flex-col max-h-full">
-    <h1 class="text-2xl font-bold mb-4">Change Logs</h1>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold mb-4">Change Logs</h1>
+      <UColorModeButton />
+    </div>
     <div class="flex-1 overflow-y-hidden p-4 rounded-lg">
       <ul class="flex flex-col gap-4">
         <li
