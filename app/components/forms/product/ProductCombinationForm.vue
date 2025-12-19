@@ -122,10 +122,11 @@
           >
             <thead>
               <tr class="[&_th]:text-xs [&_th]:uppercase">
-                <th>Default</th>
+                <th></th>
                 <th class="text-left">Combinations</th>
                 <th>Price</th>
                 <th>Stock</th>
+                <th>Images</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -154,6 +155,22 @@
                 </td>
                 <td>
                   <UInputNumber placeholder="0" v-model="specification.stock" />
+                </td>
+                <td>
+                  <UAvatarGroup>
+                    <UTooltip text="Manage Images">
+                      <UButton
+                        @click="handleManageImage(specification)"
+                        class="font-bold rounded-full"
+                        icon="i-lucide-image-plus"
+                      />
+                    </UTooltip>
+                    <UAvatar
+                      v-for="(image, imageInx) in specification.images"
+                      :key="`${specification.id}-image-${imageInx}`"
+                      :src="image"
+                    />
+                  </UAvatarGroup>
                 </td>
                 <td>
                   <div class="flex justify-end">
@@ -188,6 +205,7 @@
 <script setup lang="ts">
 import type { FetchError } from "ofetch";
 import ConfirmationDialog from "~/components/dialogs/ConfirmationDialog.vue";
+import ProductSpecificationImageManager from "~/components/dialogs/ProductSpecificationImageManager.vue";
 import { useAttributeStore } from "~/store/attribute.store";
 import { useProductFormStore } from "~/store/productForm.store";
 import {
@@ -378,6 +396,7 @@ const handleGenerateCombinationClick = () => {
       stock: product.value?.specification?.stock ?? 0,
       default: combKey == 0 ? true : false,
       sale: false,
+      images: [],
       created_at: "",
     });
   });
@@ -431,6 +450,7 @@ const handleSaveCombinationsClick = async () => {
       default: productSpecification.default,
       sale: productSpecification.sale,
       sale_price: productSpecification.sale_price,
+      images: JSON.stringify(productSpecification.images),
     };
 
     await productSpecificationStore.addProductSpecification(params);
@@ -444,6 +464,16 @@ const handleSaveCombinationsClick = async () => {
     description: "New combinations has been saved.",
     icon: "i-lucide-check",
     color: "success",
+  });
+};
+
+const imageManagerModal = overlay.create(ProductSpecificationImageManager);
+const handleManageImage = (specification: ProductSpecification) => {
+  imageManagerModal.open({
+    selectedImages: specification.images,
+    onDone: (images: string[]) => {
+      specification.images = images;
+    },
   });
 };
 </script>

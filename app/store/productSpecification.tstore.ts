@@ -12,6 +12,7 @@ export interface ProductSpecificationForm {
   default: boolean;
   sale?: boolean;
   sale_price?: number;
+  images: string;
 }
 
 interface ProductSpecificationRaw {
@@ -24,6 +25,7 @@ interface ProductSpecificationRaw {
   sale: boolean;
   sale_price?: number;
   created_at: string;
+  images: string;
 }
 
 export const useProductSpecificationStore = defineStore(
@@ -66,6 +68,7 @@ export const useProductSpecificationStore = defineStore(
           ...item,
           combination: JSON.parse(item.combination),
           default: item.default == "1" ? true : false,
+          images: item.images ? JSON.parse(item.images) : [],
         }));
         return productSpecifications.value;
       } catch (error) {
