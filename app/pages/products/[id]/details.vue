@@ -57,59 +57,6 @@
               <UBadge variant="outline" color="neutral">Apple</UBadge>
             </li>
           </ul>
-          <div class="mt-4 flex flex-col gap-2">
-            <p class="font-bold uppercase text-xs opacity-80">Variants</p>
-            <div class="flex gap-4">
-              <div class="flex flex-col w-1/5 items-center">
-                <img
-                  :src="productFormStore.product?.thumbnail"
-                  class="rounded-lg"
-                />
-                <div class="py-1 flex flex-col items-center">
-                  <div class="text-xs">13GB RAM</div>
-                  <div class="flex items-center gap-1">
-                    <span
-                      class="border border-accented w-3 h-3 rounded block"
-                      style="background-color: red"
-                    ></span>
-                    <p class="text-xs">Red</p>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col w-1/5 items-center">
-                <img
-                  :src="productFormStore.product?.thumbnail"
-                  class="rounded-lg"
-                />
-                <div class="py-1 flex flex-col items-center">
-                  <div class="text-xs">13GB RAM</div>
-                  <div class="flex items-center gap-1">
-                    <span
-                      class="border border-accented w-3 h-3 rounded block"
-                      style="background-color: orange"
-                    ></span>
-                    <p class="text-xs">Orange</p>
-                  </div>
-                </div>
-              </div>
-              <div class="flex flex-col w-1/5 items-center">
-                <img
-                  :src="productFormStore.product?.thumbnail"
-                  class="rounded-lg"
-                />
-                <div class="py-1 flex flex-col items-center">
-                  <div class="text-xs">13GB RAM</div>
-                  <div class="flex items-center gap-1">
-                    <span
-                      class="border border-accented w-3 h-3 rounded block"
-                      style="background-color: green"
-                    ></span>
-                    <p class="text-xs">Green</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
       <div class="mt-8">
