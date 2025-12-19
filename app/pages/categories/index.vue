@@ -128,7 +128,23 @@ const columns: TableColumn<CategoryListItem>[] = [
     accessorKey: "name",
     header: "Category",
     cell: ({ row }: TableRow<CategoryListItem>) =>
-      h("div", {}, row.getValue("name")),
+      h(
+        "div",
+        { class: "flex flex-col" },
+        {
+          default: () => [
+            h("p", {}, row.getValue("name")),
+            h(
+              "p",
+              {
+                class:
+                  "text-xs text-neutral-500 max-w-[400px] overflow-hidden whitespace-nowrap text-ellipsis",
+              },
+              row.original.description
+            ),
+          ],
+        }
+      ),
   },
   {
     accessorKey: "created_at",

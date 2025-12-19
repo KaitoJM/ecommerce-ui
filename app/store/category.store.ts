@@ -12,6 +12,7 @@ import { defineStore } from "pinia";
 
 export interface CategoryForm {
   name: string;
+  description: string;
 }
 
 const config = useRuntimeConfig();
@@ -53,6 +54,7 @@ export const useCategoryStore = defineStore("categoryStore", () => {
     return categories.value.map((category) => ({
       id: category.id,
       name: category.name,
+      description: category.description,
       created_at: category.created_at,
     }));
   });
