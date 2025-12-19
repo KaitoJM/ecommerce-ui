@@ -112,8 +112,55 @@
           </div>
         </div>
       </div>
-      <USeparator class="my-4" />
-      <div>
+      <div class="mt-8">
+        <div class="border border-accented rounded-lg overflow-hidden">
+          <table
+            class="w-full [&_th,&_td]:px-4 [&_th,&_td]:py-2 [&_th,&_td]:border-b [&_th,&_td]:border-accented [&_td:not(:last-child)]:border-r"
+          >
+            <thead>
+              <tr class="[&_th]:text-xs [&_th]:uppercase">
+                <th class="text-left">Combinations</th>
+                <th>Stock</th>
+                <th>Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(
+                  specification, specificationIndex
+                ) in productSpecifications"
+                :key="`specific-row-${specificationIndex}-${specification.id}`"
+              >
+                <td>
+                  <div class="flex gap-2 items-center">
+                    <img
+                      v-if="specification.images.length"
+                      :src="specification.images[0]"
+                      alt=""
+                      class="size-10 rounded"
+                    />
+                    <img
+                      v-else
+                      src="/image-placeholder.jpg"
+                      class="size-10 rounded"
+                    />
+                    <p>
+                      {{
+                        specification?.combination
+                          ?.map((item: Combination) => item.value)
+                          .join(" | ")
+                      }}
+                    </p>
+                  </div>
+                </td>
+                <td align="right">{{ specification.stock }}</td>
+                <td align="right">{{ specification.price }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="mt-8">
         <p class="font-bold uppercase text-xs opacity-80">Description</p>
         <br />
         <div class="flex flex-col gap-4">
@@ -147,6 +194,8 @@
 import { useNavigationStore } from "~/store/navigation.store";
 import { useProductFormStore } from "~/store/productForm.store";
 import { useProductFormImageStore } from "~/store/productFormImage.store";
+import { useProductSpecificationStore } from "~/store/productSpecification.tstore";
+import type { Combination } from "~/types/Product.types";
 
 definePageMeta({
   layout: "main-template",
@@ -156,6 +205,7 @@ definePageMeta({
 const navigationStore = useNavigationStore();
 const productFormStore = useProductFormStore();
 const productFormImageStore = useProductFormImageStore();
+const productSpecificationStore = useProductSpecificationStore();
 const route = useRoute();
 
 const imageSources = computed<string[]>(() => {
@@ -173,8 +223,15 @@ const imageSources = computed<string[]>(() => {
   return cover ? [cover, ...otherImages] : otherImages;
 });
 
+const productSpecifications = computed(
+  () => productSpecificationStore.productSpecifications
+);
+
 await productFormStore.getProduct(route.params.id as string);
 await productFormImageStore.getProductImages(route.params.id as string);
+await productSpecificationStore.getProductSpecifications(
+  route.params.id as string
+);
 
 onMounted(() => {
   navigationStore.setPageTitle("Product Information");
