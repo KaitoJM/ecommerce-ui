@@ -1,4 +1,5 @@
 import type { Attribute } from "./Attribute.types";
+import type { Brand } from "./Brand.types";
 import type { Category } from "./Category.types";
 
 export interface Combination {
@@ -27,6 +28,7 @@ export interface Product {
   published: string;
   thumbnail?: string;
   categories: Category[];
+  brand?: Brand;
   specification?: ProductSpecification;
   created_at: string;
 }
@@ -41,6 +43,7 @@ export interface ProductListItem {
   sku: string;
   stock: number;
   categories: string[];
+  brand?: Brand;
   created_at: string;
 }
 

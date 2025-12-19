@@ -54,7 +54,9 @@
             </li>
             <li class="py-2 px-4 flex justify-between">
               Brand
-              <UBadge variant="outline" color="neutral">Apple</UBadge>
+              <UBadge variant="outline" color="neutral">{{
+                productFormStore.product?.brand?.name
+              }}</UBadge>
             </li>
           </ul>
         </div>
