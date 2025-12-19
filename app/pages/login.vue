@@ -1,10 +1,10 @@
 <template>
-  <div class="flex items-center">
+  <div class="flex flex-col-reverse md:flex-row items-center">
     <div class="flex-1 h-screen p-8 bg-neutral-50 dark:bg-neutral-900">
       <ChangeLogs />
     </div>
     <div
-      class="w-150 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4 p-8 h-screen"
+      class="w-full md:w-150 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4 p-8 h-screen"
     >
       <Logo class="w-40" />
       <UPageCard class="w-full max-w-md">
