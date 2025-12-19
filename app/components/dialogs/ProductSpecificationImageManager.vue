@@ -22,7 +22,7 @@
           >
             <UIcon name="i-lucide-check" class="size-3" />
           </span>
-          <img :src="image" />
+          <img :src="image" class="w-full h-full object-contain bg-white" />
         </div>
       </div>
     </template>

@@ -166,9 +166,16 @@
                       />
                     </UTooltip>
                     <UAvatar
-                      v-for="(image, imageInx) in specification.images"
+                      v-for="(image, imageInx) in specification.images.slice(
+                        0,
+                        specification.images.length > 3 ? 2 : 3
+                      )"
                       :key="`${specification.id}-image-${imageInx}`"
                       :src="image"
+                    />
+                    <UAvatar
+                      v-if="specification.images.length > 3"
+                      :text="`+${specification.images.length - 2}`"
                     />
                   </UAvatarGroup>
                 </td>
