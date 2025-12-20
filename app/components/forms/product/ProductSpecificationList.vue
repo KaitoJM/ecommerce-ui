@@ -113,12 +113,9 @@ let productSpecifications = computed(
 );
 
 const handleDefautCheckClick = (key: number) => {
-  productSpecificationStore.setNewProductSpecificationsSet(
-    productSpecifications.value.map((item, itemKey) => ({
-      ...item,
-      default: itemKey == key,
-    }))
-  );
+  productSpecifications.value.forEach((item, itemKey) => {
+    item.default = itemKey == key;
+  });
 };
 
 const handleRemoveSpecificationClick = (key: number) => {
