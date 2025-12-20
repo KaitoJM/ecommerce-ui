@@ -29,6 +29,7 @@ export interface Product {
   thumbnail?: string;
   categories: Category[];
   brand?: Brand;
+  brand_id: string;
   specification?: ProductSpecification;
   created_at: string;
 }
@@ -43,6 +44,7 @@ export interface ProductListItem {
   sku: string;
   stock: number;
   categories: string[];
+  brand_id: string;
   brand?: Brand;
   created_at: string;
 }

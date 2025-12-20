@@ -33,7 +33,7 @@
           <UInputNumber v-model="stock" placeholder="0" class="w-full" />
         </UFormField>
         <UFormField label="Brand">
-          <USelect :items="brands" class="w-full" />
+          <USelect v-model="brand_id" :items="allBrands" class="w-full" />
         </UFormField>
         <UFormField label="Categories">
           <UFieldGroup class="w-full">
@@ -110,15 +110,19 @@ import type { PaginationParams } from "~/types/Global.types";
 import type { Product } from "~/types/Product.types";
 import type { Category } from "~/types/Category.types";
 import type { SelectMenuItem } from "@nuxt/ui";
+import { useBrandStore } from "~/store/brand.store";
+import type { Brand } from "~/types/Brand.types";
 
 const productFormStore = useProductFormStore();
 const categoryStore = useCategoryStore();
+const brandStore = useBrandStore();
+
 const toast = useToast();
-const brands = ref(["Apple", "Samsung", "HP", "LG"]);
 const loading = ref<boolean>(false);
 
 onMounted(() => {
   categoryStore.getCategories({ page: 1, per_page: 100 } as PaginationParams);
+  brandStore.getBrands({ page: 1, per_page: 100 } as PaginationParams);
 });
 
 const name = computed({
@@ -151,6 +155,11 @@ const published = computed({
   set: (value) => (productFormStore.productInformation!.published = value),
 });
 
+const brand_id = computed({
+  get: () => productFormStore.productInformation.brand_id,
+  set: (value) => (productFormStore.productInformation!.brand_id = value),
+});
+
 const categories = computed({
   get: () => productFormStore.productInformation.categories,
   set: (value) => (productFormStore.productInformation!.categories = value),
@@ -166,6 +175,12 @@ const allCategories = computed(() => {
     .map((item: Category) => {
       return { label: item.name, value: item.id };
     });
+});
+
+const allBrands = computed(() => {
+  return brandStore.brands.map((item: Brand) => {
+    return { label: item.name, value: item.id };
+  });
 });
 
 const handleAttachCategory = () => {

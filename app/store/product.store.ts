@@ -53,6 +53,7 @@ export const useProductStore = defineStore("productStore", () => {
       sku: "",
       stock: product?.specification?.stock ?? "",
       brand: product.brand ?? null,
+      brand_id: product.brand_id,
       categories: product.categories.map((cat) => cat.name),
       created_at: product.created_at,
     }));

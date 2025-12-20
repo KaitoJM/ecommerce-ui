@@ -21,6 +21,7 @@ export interface ProductInformationForm {
   summary: string;
   description: string;
   categories: Category[];
+  brand_id: string;
   price: number;
   stock: number;
   published: boolean;
@@ -42,6 +43,7 @@ export const useProductFormStore = defineStore("productFormStore", () => {
     summary: "",
     description: "",
     categories: [],
+    brand_id: "",
     price: 0,
     stock: 0,
     published: false,
@@ -64,6 +66,7 @@ export const useProductFormStore = defineStore("productFormStore", () => {
         summary: product.value.summary,
         description: product.value.description,
         categories: product.value.categories,
+        brand_id: product.value.brand_id,
         price: product.value?.specification?.price ?? 0,
         stock: product.value?.specification?.stock ?? 0,
         published: product.value.published ? true : false,
@@ -147,6 +150,7 @@ export const useProductFormStore = defineStore("productFormStore", () => {
             categories: productInformation.value.categories.map(
               (item) => item.id
             ),
+            brand_id: productInformation.value.brand_id,
             price: productInformation.value.price,
             stock: productInformation.value.stock,
           },
