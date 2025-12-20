@@ -1,9 +1,11 @@
 <template>
-  <div>
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos dicta
-    necessitatibus, voluptate aperiam tenetur unde aut, provident quas vitae
-    exercitationem est animi sed enim earum doloremque. Rem quos numquam
-    inventore?
+  <div class="h-full flex flex-col items-center justify-center">
+    <UEmpty
+      variant="naked"
+      icon="i-lucide-brush-cleaning"
+      title="No Contents Yet"
+      description="We’re still working on the dashboard. In the meantime, you can explore the other pages available."
+    />
   </div>
 </template>
 
