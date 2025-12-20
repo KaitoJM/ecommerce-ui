@@ -5,7 +5,7 @@ import Logo from "~/components/ui/Logo.vue";
 <template>
   <UDashboardGroup class="h-screen overflow-hidden">
     <UDashboardSidebar>
-      <Logo class="my-2 w-[100px] mx-auto" />
+      <Logo class="my-2 w-80 mx-auto" />
       <Navigation />
     </UDashboardSidebar>
     <UDashboardPanel class="flex flex-col">

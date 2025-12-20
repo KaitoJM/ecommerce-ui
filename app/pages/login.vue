@@ -6,7 +6,7 @@
     <div
       class="w-full md:w-150 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4 p-8 h-screen"
     >
-      <Logo class="w-40" />
+      <Logo class="w-80 mb-2" />
       <UPageCard class="w-full max-w-md">
         <UForm class="flex flex-col gap-4" @submit.prevent="handleLogin">
           <p class="font-bold text-lg">Welcome back!</p>
