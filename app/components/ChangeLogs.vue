@@ -5,7 +5,7 @@
       <UColorModeButton class="invisible md:visible" />
     </div>
     <div class="flex-1 overflow-y-auto md:px-4 py-2 rounded-lg">
-      <ul class="flex flex-col gap-2">
+      <ul v-if="!loading" class="flex flex-col gap-2">
         <li
           v-for="(release, releaseKey) in changeLogs"
           :key="`release-${releaseKey}`"
@@ -41,6 +41,28 @@
           </div>
         </li>
       </ul>
+      <template v-if="loading">
+        <div class="flex flex-col gap-4">
+          <div class="flex items-start gap-4">
+            <USkeleton class="h-4 w-4 rounded-full" />
+
+            <div class="grid gap-2">
+              <USkeleton class="h-4 w-[150px]" />
+              <USkeleton class="h-4 w-[300px]" />
+              <USkeleton class="h-4 w-[300px]" />
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <USkeleton class="h-4 w-4 rounded-full" />
+
+            <div class="grid gap-2">
+              <USkeleton class="h-4 w-[150px]" />
+              <USkeleton class="h-4 w-[300px]" />
+              <USkeleton class="h-4 w-[300px]" />
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -53,9 +75,15 @@ const changeLogs = computed(() => {
   return github.changeLogs.value;
 });
 
-onMounted(() => {
+const loading = ref<boolean>(true);
+
+onMounted(async () => {
+  loading.value = true;
   try {
-    github.getChangeLogs();
-  } catch (error) {}
+    await github.getChangeLogs();
+  } catch (error) {
+  } finally {
+    loading.value = false;
+  }
 });
 </script>
