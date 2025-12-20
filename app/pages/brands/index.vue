@@ -128,7 +128,8 @@ const columns: TableColumn<BrandListItem>[] = [
             h("img", {
               src: row.original.image,
               alt: row.getValue("name"),
-              class: "w-6 h-6 object-contain rounded mr-4 mb-2",
+              class:
+                "w-8 h-8 object-contain bg-neutral-100 dark:bg-neutral-800 p-1 rounded mr-4",
             }),
             h("div", { class: "flex flex-col" }, [
               h("p", { class: "font-medium" }, row.getValue("name")),

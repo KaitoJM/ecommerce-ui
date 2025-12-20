@@ -54,9 +54,15 @@
             </li>
             <li class="py-2 px-4 flex justify-between">
               Brand
-              <UBadge variant="outline" color="neutral">{{
-                productFormStore.product?.brand?.name
-              }}</UBadge>
+              <div class="flex gap-2">
+                <img
+                  :src="productFormStore.product?.brand?.image"
+                  class="h-5"
+                />
+                <UBadge variant="outline" color="neutral">{{
+                  productFormStore.product?.brand?.name
+                }}</UBadge>
+              </div>
             </li>
           </ul>
         </div>
