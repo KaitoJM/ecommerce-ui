@@ -1,11 +1,12 @@
 <template>
   <div class="flex flex-col-reverse md:flex-row items-center">
-    <div class="flex-1 h-screen p-8 bg-neutral-50 dark:bg-neutral-900">
+    <div class="flex-1 h-screen p-4 md:p-8 bg-neutral-50 dark:bg-neutral-900">
       <ChangeLogs />
     </div>
     <div
       class="w-full md:w-150 dark:bg-neutral-950 flex flex-col items-center justify-center gap-4 p-8 h-screen"
     >
+      <UColorModeButton class="absolute top-4 right-4 md:hidden" />
       <Logo class="w-80 mb-2" />
       <UPageCard class="w-full max-w-md">
         <UForm class="flex flex-col gap-4" @submit.prevent="handleLogin">
