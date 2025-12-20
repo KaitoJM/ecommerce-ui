@@ -14,7 +14,7 @@
         <UInput
           v-model="searchKeyword"
           icon="i-lucide-search"
-          class="w-80"
+          class="w-full md:w-80"
           size="md"
           variant="outline"
           placeholder="Search brands..."

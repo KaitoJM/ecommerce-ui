@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-2">
-    <div class="flex items-center gap-4">
+    <div class="hidden md:flex items-center gap-4">
       <TotalCategories />
       <TotalUnusedCategories />
     </div>
@@ -18,7 +18,7 @@
         <UInput
           v-model="searchKeyword"
           icon="i-lucide-search"
-          class="w-80"
+          class="w-full md:w-80"
           size="md"
           variant="outline"
           placeholder="Search categories..."

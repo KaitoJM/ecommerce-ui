@@ -1,6 +1,8 @@
 <template>
   <div class="flex flex-col gap-2">
-    <div class="flex justify-between items-center">
+    <div
+      class="flex flex-col md:flex-row gap-2 justify-between md:items-center"
+    >
       <slot name="headerLeft"></slot>
       <div class="flex items-center gap-2">
         <UFieldGroup>
