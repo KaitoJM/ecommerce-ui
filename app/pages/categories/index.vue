@@ -232,7 +232,7 @@ const handleViewDetails = (categoryId: string) => {
 
 const handleEditCategory = (categoryId: string) => {
   console.log("Edit category ID:", categoryId);
-  router.push(`/categories/manage/${categoryId}`);
+  router.push(`/categories/${categoryId}/manage`);
 };
 
 const handleDuplicateCategory = (categoryId: string) => {

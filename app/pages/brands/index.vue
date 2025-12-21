@@ -221,7 +221,7 @@ const handleViewDetails = (brandId: string) => {
 
 const handleEditBrand = (brandId: string) => {
   console.log("Edit brand ID:", brandId);
-  router.push(`/brands/manage/${brandId}`);
+  router.push(`/brands/${brandId}/manage`);
 };
 
 const handleDuplicateBrand = (brandId: string) => {

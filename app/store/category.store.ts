@@ -151,6 +151,50 @@ export const useCategoryStore = defineStore("categoryStore", () => {
     }
   };
 
+  const updateCategory = async (
+    categoryId: string,
+    params: { name: string; description: string }
+  ) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(
+        `Failed to update category with ID ${categoryId}:`,
+        "No auth token found"
+      );
+
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
+    try {
+      await $fetch(`${config.public.apiBase}/categories/${categoryId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+        body: params,
+      });
+    } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(`Failed to update category with ID ${categoryId}:`, error);
+      throw apiError;
+    }
+  };
+
   const deleteCategory = async (categoryId: string) => {
     const token = localStorage.getItem("token");
 
@@ -204,6 +248,7 @@ export const useCategoryStore = defineStore("categoryStore", () => {
     links,
     getCategories,
     storeCategory,
+    updateCategory,
     deleteCategory,
   };
 });
