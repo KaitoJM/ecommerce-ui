@@ -25,7 +25,7 @@
         <UButton
           :loading="loading"
           type="submit"
-          label="Save Product Information"
+          label="Save Category Information"
           icon="i-lucide-save"
           size="xl"
           variant="outline"
@@ -95,6 +95,13 @@ const updateCategory = async () => {
     await categoryStore.updateCategory(route.params.id as string, {
       name: name.value,
       description: description.value,
+    });
+
+    toast.add({
+      title: "Success",
+      description: "Category saved successfully.",
+      icon: "i-lucide-check",
+      color: "success",
     });
   } catch (error) {
     loading.value = false;
