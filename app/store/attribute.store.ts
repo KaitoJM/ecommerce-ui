@@ -166,6 +166,53 @@ export const useAttributeStore = defineStore("attributeStore", () => {
     }
   };
 
+  const updateAttribute = async (
+    attributeId: string,
+    params: { attribute: string; selection_type: string }
+  ) => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error(
+        `Failed to update attribute with ID ${attributeId}:`,
+        "No auth token found"
+      );
+
+      throw {
+        message: "Authentication required. Please log in again.",
+        statusCode: 401,
+      } satisfies ApiError;
+    }
+
+    try {
+      await $fetch(`${config.public.apiBase}/attributes/${attributeId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+        body: params,
+      });
+    } catch (error) {
+      const fetchError = error as FetchError<any>;
+
+      const apiError: ApiError = {
+        message:
+          fetchError.data?.message ??
+          fetchError.message ??
+          "Something went wrong",
+        errors: fetchError.data?.errors,
+        statusCode: fetchError.status,
+      };
+
+      console.error(
+        `Failed to update attribute with ID ${attributeId}:`,
+        error
+      );
+      throw apiError;
+    }
+  };
+
   const deleteAttribute = async (attributeId: string) => {
     const token = localStorage.getItem("token");
 
@@ -189,7 +236,7 @@ export const useAttributeStore = defineStore("attributeStore", () => {
         },
       });
 
-      // Remove the deleted category from the attributes array
+      // Remove the deleted attribute from the attributes array
       attributes.value = attributes.value.filter(
         (attribute) => attribute.id !== attributeId
       );
@@ -221,6 +268,7 @@ export const useAttributeStore = defineStore("attributeStore", () => {
     links,
     getAttributes,
     storeAttribute,
+    updateAttribute,
     deleteAttribute,
   };
 });

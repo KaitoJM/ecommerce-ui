@@ -1,22 +1,18 @@
 <template>
   <div>
-    <UForm class="flex flex-col gap-4" @submit.prevent="updateCategory()">
+    <UForm class="flex flex-col gap-4" @submit.prevent="updateAttribute()">
       <div class="flex flex-col gap-4">
-        <UFormField label="Category" help="The name of the category.">
+        <UFormField label="Attribute" help="The name of the attribute.">
           <UInput
-            v-model="name"
-            placeholder="Enter category name"
+            v-model="attribute"
+            placeholder="Enter attribute name"
             class="w-full"
           />
         </UFormField>
-        <UFormField
-          label="Short description"
-          help="Write a description of the category"
-          hint="(Optional)"
-        >
-          <UTextarea
-            v-model="description"
-            placeholder="Tell us what the category is about..."
+        <UFormField label="Selection Type" hint="(Optional)">
+          <USelect
+            v-model="selection_type"
+            :items="selectionTypeItems"
             class="w-full"
           />
         </UFormField>
@@ -25,7 +21,7 @@
         <UButton
           :loading="loading"
           type="submit"
-          label="Save Category Information"
+          label="Save Attribute Information"
           icon="i-lucide-save"
           size="xl"
           variant="outline"
@@ -36,11 +32,11 @@
 </template>
 
 <script setup lang="ts">
-import { useCategoryStore } from "~/store/category.store";
-import { useCategoryFormStore } from "~/store/categoryForm.store";
+import { useAttributeStore } from "~/store/attribute.store";
+import { useAttributeFormStore } from "~/store/attributeForm.store";
 import { useNavigationStore } from "~/store/navigation.store";
 import type { ApiError } from "~/types/ApiResponses.types";
-import type { Category } from "~/types/Category.types";
+import type { Attribute } from "~/types/Attribute.types";
 
 definePageMeta({
   layout: "main-template",
@@ -48,20 +44,23 @@ definePageMeta({
 });
 
 const navigationStore = useNavigationStore();
-const categoryStore = useCategoryStore();
-const categoryFormStore = useCategoryFormStore();
+const attributeStore = useAttributeStore();
+const attributeFormStore = useAttributeFormStore();
 const route = useRoute();
 const toast = useToast();
 
+const selectionTypeItems = ref(["radio", "dropdown", "color"]);
+
 // form fields declarations
-const name = computed({
-  get: () => categoryFormStore.categoryInformation.name,
-  set: (value) => (categoryFormStore.categoryInformation!.name = value),
+const attribute = computed({
+  get: () => attributeFormStore.attributeInformation.attribute,
+  set: (value) => (attributeFormStore.attributeInformation!.attribute = value),
 });
 
-const description = computed({
-  get: () => categoryFormStore.categoryInformation.description,
-  set: (value) => (categoryFormStore.categoryInformation!.description = value),
+const selection_type = computed({
+  get: () => attributeFormStore.attributeInformation.selection_type,
+  set: (value) =>
+    (attributeFormStore.attributeInformation!.selection_type = value),
 });
 
 const loading = ref<boolean>(false);
@@ -69,10 +68,10 @@ const loading = ref<boolean>(false);
 onMounted(async () => {
   loading.value = true;
   try {
-    const category: Category = await categoryFormStore.getCategory(
+    const attribute: Attribute = await attributeFormStore.getAttribute(
       route.params.id as string
     );
-    navigationStore.setPageTitle(`Manage Category "${category.name}"`);
+    navigationStore.setPageTitle(`Manage Attribute "${attribute.attribute}"`);
   } catch (error) {
     loading.value = false;
 
@@ -89,17 +88,17 @@ onMounted(async () => {
   }
 });
 
-const updateCategory = async () => {
+const updateAttribute = async () => {
   loading.value = true;
   try {
-    await categoryStore.updateCategory(route.params.id as string, {
-      name: name.value,
-      description: description.value,
+    await attributeStore.updateAttribute(route.params.id as string, {
+      attribute: attribute.value,
+      selection_type: selection_type.value,
     });
 
     toast.add({
       title: "Success",
-      description: "Category saved successfully.",
+      description: "Attribute saved successfully.",
       icon: "i-lucide-check",
       color: "success",
     });

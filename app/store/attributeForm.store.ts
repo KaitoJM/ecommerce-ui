@@ -1,30 +1,30 @@
 import type { FetchError } from "ofetch";
 import { defineStore } from "pinia";
 import type { ApiError, ApiSuccess } from "~/types/ApiResponses.types";
-import type { Category } from "~/types/Category.types";
+import type { Attribute, AttributeSelection } from "~/types/Attribute.types";
 
-export interface CategoryInformationForm {
+export interface AttributeInformationForm {
   id: string;
-  name: string;
-  description: string;
+  attribute: string;
+  selection_type: AttributeSelection;
 }
 
 const config = useRuntimeConfig();
 
-export const useCategoryFormStore = defineStore("categoryFormStore", () => {
-  const category = ref<Category | null>(null);
-  const categoryInformation = ref<CategoryInformationForm>({
+export const useAttributeFormStore = defineStore("attributeFormStore", () => {
+  const attribute = ref<Attribute | null>(null);
+  const attributeInformation = ref<AttributeInformationForm>({
     id: "",
-    name: "",
-    description: "",
+    attribute: "",
+    selection_type: "dropdown",
   });
 
-  const getCategory = async (id: string): Promise<Category> => {
+  const getAttribute = async (id: string): Promise<Attribute> => {
     const token = localStorage.getItem("token");
 
     if (!token) {
       console.error(
-        `Failed to fetch category information`,
+        `Failed to fetch attribute information`,
         "No auth token found"
       );
       throw {
@@ -34,8 +34,8 @@ export const useCategoryFormStore = defineStore("categoryFormStore", () => {
     }
 
     try {
-      const res: ApiSuccess<Category> = await $fetch(
-        `${config.public.apiBase}/categories/${id}`,
+      const res: ApiSuccess<Attribute> = await $fetch(
+        `${config.public.apiBase}/attributes/${id}`,
         {
           method: "GET",
           headers: {
@@ -45,13 +45,13 @@ export const useCategoryFormStore = defineStore("categoryFormStore", () => {
         }
       );
 
-      category.value = res.data;
+      attribute.value = res.data;
 
-      //category information
-      categoryInformation.value = {
-        id: category.value.id,
-        name: category.value.name,
-        description: category.value.description,
+      //attribute information
+      attributeInformation.value = {
+        id: attribute.value.id,
+        attribute: attribute.value.attribute,
+        selection_type: attribute.value.selection_type,
       };
 
       return res.data;
@@ -66,14 +66,14 @@ export const useCategoryFormStore = defineStore("categoryFormStore", () => {
         statusCode: fetchError.status,
       };
 
-      console.error("Failed to fetch category information:", error);
+      console.error("Failed to fetch attribute information:", error);
       throw apiError;
     }
   };
 
   return {
-    category,
-    categoryInformation,
-    getCategory,
+    attribute,
+    attributeInformation,
+    getAttribute,
   };
 });

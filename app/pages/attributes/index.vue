@@ -217,7 +217,7 @@ const handleViewDetails = (attributeId: string) => {
 
 const handleEditAttribute = (attributeId: string) => {
   console.log("Edit attribute ID:", attributeId);
-  router.push(`/attributes/manage/${attributeId}`);
+  router.push(`/attributes/${attributeId}/manage`);
 };
 
 const handleDuplicateAttribute = (attributeId: string) => {
