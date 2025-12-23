@@ -3,7 +3,7 @@ name: Deploy Nuxt App
 on:
   push:
     tags:
-      - v**-production
+      - v**
 
 jobs:
   deploy:
