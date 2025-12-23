@@ -109,7 +109,6 @@ import type { ApiError } from "~/types/ApiResponses.types";
 import type { PaginationParams } from "~/types/Global.types";
 import type { Product } from "~/types/Product.types";
 import type { Category } from "~/types/Category.types";
-import type { SelectMenuItem } from "@nuxt/ui";
 import { useBrandStore } from "~/store/brand.store";
 import type { Brand } from "~/types/Brand.types";
 
@@ -165,7 +164,10 @@ const categories = computed({
   set: (value) => (productFormStore.productInformation!.categories = value),
 });
 
-const categorySelect = ref<SelectMenuItem>("");
+const categorySelect = ref<{ value: string; label: string }>({
+  value: "",
+  label: "",
+});
 
 const allCategories = computed(() => {
   return categoryStore.categories

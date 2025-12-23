@@ -65,7 +65,6 @@ import type { DropdownMenuItem } from "@nuxt/ui/runtime/components/DropdownMenu.
 import PaginationVue, { type ArrowLink } from "./Pagination.vue";
 import type { PageMeta } from "./Pagination.vue";
 import { ref } from "vue";
-import type { TableRow } from "@nuxt/ui";
 import ConfirmationDialog from "../dialogs/ConfirmationDialog.vue";
 
 const props = defineProps<{
@@ -83,7 +82,9 @@ const rowSelection = ref({});
 const selectedRowsId = computed<string[]>(() => {
   return table.value?.tableApi
     ?.getFilteredSelectedRowModel()
-    .rows.map((row: TableRow) => row.original.id.toString()) as string[];
+    .rows.map((row: { original: { id: string } }) =>
+      row.original.id.toString()
+    ) as string[];
 });
 
 const SelectedOptionItems: DropdownMenuItem[] = [
