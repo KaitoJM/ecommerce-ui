@@ -11,7 +11,7 @@ import type {
   CustomerListItem,
   Gender,
 } from "~/types/Customer.types";
-import type { User } from "~/types/User.types";
+import type { Role, User } from "~/types/User.types";
 
 const config = useRuntimeConfig();
 
@@ -50,7 +50,10 @@ export const useUserStore = defineStore("userStore", () => {
 
   const getUsers = async (
     paginationParams?: PaginationParams,
-    searchKey?: string
+    searchKey?: string,
+    filters?: {
+      role: Role;
+    }
   ): Promise<ApiPaginated<User>> => {
     const token = localStorage.getItem("token");
 
@@ -75,6 +78,12 @@ export const useUserStore = defineStore("userStore", () => {
 
     if (searchKey) {
       pageQuery += pageQuery ? `&search=${searchKey}` : `?search=${searchKey}`;
+    }
+
+    if (filters?.role) {
+      pageQuery += pageQuery
+        ? `&role=${filters.role}`
+        : `?role=${filters.role}`;
     }
 
     try {

@@ -17,7 +17,8 @@ const config = useRuntimeConfig();
 export interface CustomerForm {
   first_name: string;
   last_name: string;
-  user_id: string;
+  email: string;
+  password: string;
 }
 
 export const useCustomerStore = defineStore("customerStore", () => {

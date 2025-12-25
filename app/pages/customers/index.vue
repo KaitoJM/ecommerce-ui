@@ -170,7 +170,11 @@ const columns: TableColumn<CustomerListItem>[] = [
     accessorKey: "gender",
     header: "Sex",
     cell: ({ row }: TableRow<CustomerListItem>) => {
-      return h(UBadge, { variant: "outline" }, row.getValue("gender"));
+      if (row.getValue("gender")) {
+        return h(UBadge, { variant: "outline" }, row.getValue("gender"));
+      } else {
+        return h(UBadge, { variant: "outline", color: "neutral" }, "Unset");
+      }
     },
   },
   {
