@@ -134,6 +134,16 @@ const columns: TableColumn<Order>[] = [
     },
   },
   {
+    accessorKey: "status_id",
+    header: "Status",
+    cell: ({ row }: TableRow<Order>) =>
+      h(
+        UBadge,
+        { variant: "outline" },
+        row.original?.status ? `${row.original?.status?.status}` : "Not Set"
+      ),
+  },
+  {
     accessorKey: "customer_id",
     header: "Customer",
     cell: ({ row }: TableRow<Order>) =>
