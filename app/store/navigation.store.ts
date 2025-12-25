@@ -40,27 +40,27 @@ export const useNavigationStore = defineStore("navigationStore", () => {
       children: [
         {
           title: "Orders",
-          path: "orders",
+          path: "/orders",
           icon: "i-lucide-ticket-check",
         },
         {
           title: "Returns",
-          path: "returns",
+          path: "/returns",
           icon: "i-lucide-ticket-x",
         },
         {
           title: "Carts",
-          path: "carts",
+          path: "/carts",
           icon: "i-lucide-shopping-bag",
         },
         {
           title: "Invoices",
-          path: "invoices",
+          path: "/invoices",
           icon: "i-lucide-file-text",
         },
         {
           title: "Vouchers",
-          path: "vouchers",
+          path: "/vouchers",
           icon: "i-lucide-gift",
         },
       ],
