@@ -131,7 +131,7 @@ export const useCustomerStore = defineStore("customerStore", () => {
     }
   };
 
-  const storeCustomer = async (params: CustomerForm) => {
+  const storeCustomer = async (params: CustomerForm): Promise<Customer> => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -157,6 +157,7 @@ export const useCustomerStore = defineStore("customerStore", () => {
       );
 
       customers.value.push(response.data);
+      return response.data;
     } catch (error) {
       const fetchError = error as FetchError<any>;
 
@@ -174,7 +175,17 @@ export const useCustomerStore = defineStore("customerStore", () => {
     }
   };
 
-  const updateCustomer = async (customerId: string, params: CustomerForm) => {
+  const updateCustomer = async (
+    customerId: string,
+    params: {
+      first_name: string;
+      last_name: string;
+      middle_name: string;
+      gender: Gender;
+      birthday: string;
+      phone: string;
+    }
+  ) => {
     const token = localStorage.getItem("token");
 
     if (!token) {
@@ -267,6 +278,7 @@ export const useCustomerStore = defineStore("customerStore", () => {
     links,
     getCustomers,
     storeCustomer,
+    updateCustomer,
     deleteCustomer,
   };
 });

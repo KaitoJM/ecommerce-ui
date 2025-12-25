@@ -1,5 +1,5 @@
 <template>
-  <form @submit.prevent="handleCreate">
+  <UForm @submit.prevent="handleCreate">
     <div class="py-4 px-6 flex flex-col gap-4">
       <h1 class="text-2xl font-bold">Create New Customer</h1>
       <UFormField label="Email">
@@ -18,16 +18,18 @@
     <div class="py-4 px-6 border-t border-accented flex justify-end">
       <UButton type="submit" label="Create Customer" variant="outline" />
     </div>
-  </form>
+  </UForm>
 </template>
 
 <script setup lang="ts">
 import { useCustomerStore } from "~/store/customer.store";
 import type { ApiError } from "~/types/ApiResponses.types";
+import type { Customer } from "~/types/Customer.types";
 
 // composable declarations
 const customerStore = useCustomerStore();
 const toast = useToast();
+const router = useRouter();
 
 // emits
 const emit = defineEmits<{ done: [boolean] }>();
@@ -39,12 +41,15 @@ const email = ref<string>("");
 const password = ref<string>("password");
 
 const clearForm = () => {
-  (first_name.value = ""), (last_name.value = ""), (email.value = "");
+  (first_name.value = ""),
+    (last_name.value = ""),
+    (email.value = ""),
+    (password.value = "");
 };
 
 const handleCreate = async () => {
   try {
-    await customerStore.storeCustomer({
+    const newCustomer: Customer = await customerStore.storeCustomer({
       first_name: first_name.value,
       last_name: last_name.value,
       email: email.value,
@@ -58,7 +63,7 @@ const handleCreate = async () => {
     });
 
     clearForm();
-    emit("done", true);
+    router.push(`/customers/${newCustomer.id}/manage`);
   } catch (error: unknown) {
     const apiError = error as ApiError;
     toast.add({

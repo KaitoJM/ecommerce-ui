@@ -135,7 +135,7 @@ const columns: TableColumn<CustomerListItem>[] = [
                 class:
                   "text-xs text-neutral-500 max-w-[400px] overflow-hidden whitespace-nowrap text-ellipsis",
               },
-              row.original.user.email
+              row.original?.user?.email ?? "No Account"
             ),
           ],
         }
@@ -147,23 +147,21 @@ const columns: TableColumn<CustomerListItem>[] = [
     cell: ({ row }: TableRow<CustomerListItem>) => {
       const birthday = row.getValue("birthday");
 
-      if (!birthday) return "—";
+      if (!birthday) {
+        return h("span", { class: "text-neutral-400" }, "—");
+      }
 
       const birthDate = new Date(birthday);
       const today = new Date();
 
       let age = today.getFullYear() - birthDate.getFullYear();
+      const m = today.getMonth() - birthDate.getMonth();
 
-      const hasHadBirthdayThisYear =
-        today.getMonth() > birthDate.getMonth() ||
-        (today.getMonth() === birthDate.getMonth() &&
-          today.getDate() >= birthDate.getDate());
-
-      if (!hasHadBirthdayThisYear) {
+      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
         age--;
       }
 
-      return age;
+      return h("span", age.toString());
     },
   },
   {
