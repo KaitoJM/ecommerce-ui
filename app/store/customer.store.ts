@@ -17,10 +17,6 @@ const config = useRuntimeConfig();
 export interface CustomerForm {
   first_name: string;
   last_name: string;
-  middle_name: string;
-  gender: Gender;
-  birthday: string;
-  phone: string;
   user_id: string;
 }
 
