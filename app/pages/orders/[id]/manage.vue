@@ -19,11 +19,11 @@
       </div>
     </div>
     <div class="flex gap-8">
-      <div class="w-150 flex flex-col gap-2">
+      <div class="w-80 max-w-80 flex flex-col gap-2">
         <h4 class="uppercase font-bold text-xs">Customer</h4>
         <USeparator />
         <UUser
-          name="John Doe"
+          :name="`${order?.customer?.first_name} ${order?.customer?.last_name}`"
           description="Software Engineer"
           :avatar="{
             src: 'https://i.pravatar.cc/150?u=john-doe',
@@ -35,12 +35,14 @@
           <UBadge
             variant="outline"
             color="info"
-            label="07/27/2023"
+            :label="dateFormatter.formatDate(order?.customer?.created_at as string)"
             icon="i-lucide-calendar"
           />
         </div>
         <div class="flex items-center justify-between gap-2">
-          <h5 class="text-xs text-neutral-500">Valid order placed</h5>
+          <h5 class="text-xs text-neutral-500">
+            Order placed since registration
+          </h5>
           <UBadge variant="outline" color="info" label="1" />
         </div>
         <div class="flex items-center justify-between gap-2">
@@ -75,24 +77,97 @@
           </UAlert>
         </div>
       </div>
-      <div class="flex flex-col gap-2">
-        <h4 class="uppercase font-bold text-xs">Products</h4>
-        <USeparator />
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsam
-        doloremque vitae quam suscipit asperiores, ipsum saepe, delectus
-        reprehenderit dolores nulla harum minima, quaerat aspernatur
-        consequuntur quos laboriosam architecto dolorem nam?
+      <div class="flex-1 flex flex-col gap-2">
+        <h4 class="uppercase font-bold text-xs">Summary</h4>
+        <div class="flex gap-4">
+          <SummaryCard label="Sub Total" icon="i-lucide-square-sigma">
+            <template #value>
+              <div class="flex gap-2 items-center">
+                1000.00 PHP
+                <span class="text-xs">php</span>
+              </div>
+            </template>
+          </SummaryCard>
+          <SummaryCard label="Total Discount" icon="i-lucide-percent">
+            <template #value>
+              <div class="flex gap-2 items-center">
+                200.00
+                <span class="text-xs">PHP (20%)</span>
+              </div>
+            </template>
+          </SummaryCard>
+          <SummaryCard label="Total" icon="i-lucide-sigma">
+            <template #value>
+              <div class="flex gap-2 items-center">
+                800.00
+                <span class="text-xs">PHP</span>
+              </div>
+            </template>
+          </SummaryCard>
+        </div>
+        <div class="flex gap-2 justify-end my-4">
+          <UButton
+            label="Add Discount"
+            icon="i-lucide-ticket-percent"
+            variant="outline"
+          />
+          <UButton
+            label="Add New Product"
+            icon="i-lucide-plus"
+            variant="outline"
+          />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import SummaryCard from "~/components/dashboard/SummaryCard.vue";
+import { useNavigationStore } from "~/store/navigation.store";
+import { useOrderFormStore } from "~/store/orderForm.store";
+import type { ApiError } from "~/types/ApiResponses.types";
+import type { Order } from "~/types/Order.types";
+
 definePageMeta({
   layout: "main-template",
   middleware: "auth",
 });
 
+const orderFormStore = useOrderFormStore();
+const navigationStore = useNavigationStore();
+const route = useRoute();
+const toast = useToast();
+const dateFormatter = useDate();
+
 const statuses = ref(["Pending", "Cancelled", "In Progress", "Delivered"]);
 const status = ref("Pending");
+const order = computed(() => orderFormStore.order);
+
+const loading = ref<boolean>(false);
+
+onMounted(async () => {
+  loading.value = true;
+  try {
+    const order: Order = await orderFormStore.getOrder(
+      route.params.id as string
+    );
+    navigationStore.setPageTitle(
+      `Manage Order "#${order.id} - ${order?.customer?.first_name} ${order?.customer?.last_name}"`
+    );
+  } catch (error) {
+    loading.value = false;
+
+    const apiError = error as ApiError;
+    toast.add({
+      title: "Error",
+      description: apiError.message,
+      icon: "i-lucide-octagon-x",
+      color: "error",
+    });
+    console.error(error);
+  } finally {
+    loading.value = false;
+  }
+});
 </script>
