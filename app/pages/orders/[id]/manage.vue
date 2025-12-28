@@ -35,7 +35,11 @@
           <UBadge
             variant="outline"
             color="info"
-            :label="dateFormatter.formatDate(order?.customer?.created_at as string)"
+            :label="
+              order?.customer?.created_at
+                ? dateFormatter.formatDate(order.customer.created_at)
+                : '---'
+            "
             icon="i-lucide-calendar"
           />
         </div>
