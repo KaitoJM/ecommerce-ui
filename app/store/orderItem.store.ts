@@ -4,6 +4,7 @@ import type { ArrowLink, PageMeta } from "~/components/ui/Pagination.vue";
 import type { ApiError, ApiPaginated } from "~/types/ApiResponses.types";
 import type { PaginationParams } from "~/types/Global.types";
 import type { OrderItem, OrderItemListItem } from "~/types/Order.types";
+import type { Combination } from "~/types/Product.types";
 
 const config = useRuntimeConfig();
 
@@ -42,25 +43,19 @@ export const useOrderItemStore = defineStore("orderItemStore", () => {
 
     console.log("Mapping orderItems to orderItemList:", orderItems.value);
 
-    return orderItems.value.map((item) => ({
-      id: item.id,
-      order_id: item.order_id,
-      product_id: item.product_id,
-      product_specification_id: item.product_specification_id,
-      product_name: item.product_snapshot_name,
-      product_price: item.product_snapshot_price,
-      product_image:
-        item.product_specification.images?.[0] || item.product.thumbnail || "",
-
-      specification:
-        item.product_specification.combination
-          ?.map((c) => c.value)
-          .join(", ") || "",
-
-      quantity: item.quantity,
-      total: item.total,
-      created_at: item.created_at,
-    }));
+    return orderItems.value.map((item) => {
+      return {
+        id: item.id,
+        order_id: item.order_id,
+        product_id: item.product_id,
+        product_specification_id: item.product_specification_id,
+        product_name: item.product_snapshot_name,
+        product_price: item.product_snapshot_price,
+        quantity: item.quantity,
+        total: item.total,
+        created_at: item.created_at,
+      };
+    });
   });
 
   const getOrderItems = async (
@@ -102,7 +97,14 @@ export const useOrderItemStore = defineStore("orderItemStore", () => {
 
     try {
       const res: ApiPaginated<OrderItem> = await $fetch(
-        `${config.public.apiBase}/order-items${pageQuery}`
+        `${config.public.apiBase}/order-items${pageQuery}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
       );
 
       orderItems.value = res.data;

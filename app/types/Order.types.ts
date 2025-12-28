@@ -47,8 +47,6 @@ export interface OrderItemListItem {
   product_specification_id: string;
   product_name: string;
   product_price: string;
-  product_image: string;
-  specification: string;
   quantity: number;
   total: number;
   created_at: string;
