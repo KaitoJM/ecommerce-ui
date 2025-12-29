@@ -14,11 +14,7 @@
         />
       </div>
       <div class="flex justify-end gap-2 items-center">
-        <USelectMenu
-          v-model="status"
-          :items="orderStatuseOptions"
-          class="w-48"
-        />
+        <USelectMenu :items="orderStatuseOptions" class="w-48" />
         <UButton label="Update Status" />
       </div>
     </div>
@@ -74,7 +70,7 @@
 
 <script setup lang="ts">
 import SummaryCard from "~/components/dashboard/SummaryCard.vue";
-import CustomerInformationCard from "~/components/order/customerInformationCard.vue";
+import CustomerInformationCard from "~/components/order/CustomerInformationCard.vue";
 import OrderItemList from "~/components/order/OrderItemList.vue";
 import { useNavigationStore } from "~/store/navigation.store";
 import { useOrderFormStore } from "~/store/orderForm.store";
@@ -95,7 +91,6 @@ const navigationStore = useNavigationStore();
 const route = useRoute();
 const toast = useToast();
 
-const status = ref("Pending");
 const order = computed(() => orderFormStore.order);
 const orderItems = computed(() => orderItemStore.orderItemList);
 const orderStatuseOptions = computed(() =>
