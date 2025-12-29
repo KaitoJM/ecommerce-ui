@@ -28,7 +28,7 @@
           <SummaryCard label="Sub Total" icon="i-lucide-square-sigma">
             <template #value>
               <div class="flex gap-2 items-center">
-                1000.00 PHP
+                {{ order?.subtotal }} PHP
                 <span class="text-xs">php</span>
               </div>
             </template>
@@ -36,15 +36,15 @@
           <SummaryCard label="Total Discount" icon="i-lucide-percent">
             <template #value>
               <div class="flex gap-2 items-center">
-                200.00
-                <span class="text-xs">PHP (20%)</span>
+                {{ order?.discount_total }}
+                <span class="text-xs">PHP (0%)</span>
               </div>
             </template>
           </SummaryCard>
           <SummaryCard label="Total" icon="i-lucide-sigma">
             <template #value>
               <div class="flex gap-2 items-center">
-                800.00
+                {{ order?.total }}
                 <span class="text-xs">PHP</span>
               </div>
             </template>
