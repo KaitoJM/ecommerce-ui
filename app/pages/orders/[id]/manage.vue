@@ -14,7 +14,11 @@
         />
       </div>
       <div class="flex justify-end gap-2 items-center">
-        <USelectMenu v-model="status" :items="statuses" class="w-48" />
+        <USelectMenu
+          v-model="status"
+          :items="orderStatuseOptions"
+          class="w-48"
+        />
         <UButton label="Update Status" />
       </div>
     </div>
@@ -75,6 +79,7 @@ import OrderItemList from "~/components/order/OrderItemList.vue";
 import { useNavigationStore } from "~/store/navigation.store";
 import { useOrderFormStore } from "~/store/orderForm.store";
 import { useOrderItemStore } from "~/store/orderItem.store";
+import { useOrderStatusStore } from "~/store/orderStatus.store";
 import type { ApiError } from "~/types/ApiResponses.types";
 import type { Order } from "~/types/Order.types";
 
@@ -85,20 +90,28 @@ definePageMeta({
 
 const orderFormStore = useOrderFormStore();
 const orderItemStore = useOrderItemStore();
+const orderStatusStore = useOrderStatusStore();
 const navigationStore = useNavigationStore();
 const route = useRoute();
 const toast = useToast();
 
-const statuses = ref(["Pending", "Cancelled", "In Progress", "Delivered"]);
 const status = ref("Pending");
 const order = computed(() => orderFormStore.order);
 const orderItems = computed(() => orderItemStore.orderItemList);
+const orderStatuseOptions = computed(() =>
+  orderStatusStore.orderStatuses.map((status) => ({
+    value: status.id,
+    label: status.status,
+  }))
+);
 
 const loading = ref<boolean>(false);
 
 onMounted(async () => {
   loading.value = true;
   try {
+    orderStatusStore.getOrderStatuses({ page: 1, per_page: 100 });
+
     // Get order
     const order: Order = await orderFormStore.getOrder(
       route.params.id as string

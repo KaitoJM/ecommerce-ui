@@ -75,7 +75,14 @@ export const useOrderStatusStore = defineStore("orderStatusStore", () => {
 
     try {
       const res: ApiPaginated<OrderStatus> = await $fetch(
-        `${config.public.apiBase}/order-statuses${pageQuery}`
+        `${config.public.apiBase}/order-statuses${pageQuery}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
       );
 
       orderStatuses.value = res.data;
